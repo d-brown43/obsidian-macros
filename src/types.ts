@@ -1,4 +1,5 @@
 export type Macro = {
+  id: string;
   text: string;
 };
 

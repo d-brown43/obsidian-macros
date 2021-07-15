@@ -1,8 +1,12 @@
 import ReactDOM from "react-dom";
 import React from "react";
-const { App, Modal, Plugin } = eval('require')('obsidian');
+import { App, Modal, Plugin } from 'obsidian';
 import MacroManageModal from './MacroManageModal';
 import {PluginSettings} from "./types";
+import {Provider} from "react-redux";
+import store from "./redux";
+import {Unsubscribe} from "redux";
+import {rehydrate} from "./redux/hydration";
 
 const DEFAULT_SETTINGS: PluginSettings = {
 	macros: [],
@@ -10,17 +14,33 @@ const DEFAULT_SETTINGS: PluginSettings = {
 
 export default class MacroPlugin extends Plugin {
 	settings: PluginSettings = DEFAULT_SETTINGS;
+	storeUnsubscribe: Unsubscribe | null = null;
+
+	subscribeToStore() {
+		let timerId: NodeJS.Timeout | null = null;
+		let promise = Promise.resolve();
+		this.storeUnsubscribe = store.subscribe(() => {
+			if (timerId) {
+				clearTimeout(timerId);
+			}
+			timerId = setTimeout(() => {
+				promise = promise.then(() => {
+					this.saveSettings();
+				});
+			}, 1000);
+		});
+	}
+
+	async rehydrate() {
+		const settings = await this.loadData();
+		store.dispatch(rehydrate(settings.macros));
+	}
 
 	async onload() {
 		console.log('loading plugin');
 
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-
-		// this.addRibbonIcon('dice', 'Sample Plugin', () => {
-		// 	new Notice('This is a notice!');
-		// });
-
-		// this.addStatusBarItem().setText('Status Bar Text');
+		await this.rehydrate();
+		this.subscribeToStore();
 
 		this.addCommand({
 			id: 'macro',
@@ -39,22 +59,22 @@ export default class MacroPlugin extends Plugin {
 				return false;
 			}
 		});
-
-		// this.addSettingTab(new SampleSettingTab(this.app, this));
-
-		this.registerCodeMirror((cm: CodeMirror.Editor) => {
-			console.log('codemirror', cm);
-		});
-
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
 	}
 
 	onunload() {
 		console.log('unloading plugin');
+		if (this.storeUnsubscribe) {
+			this.storeUnsubscribe();
+		}
 	}
 
 	async saveSettings() {
-		await this.saveData(this.settings);
+		const macros = store.getState().macro;
+		const settings = {
+			macros,
+		};
+		console.log('saving settings', settings);
+		await this.saveData(settings);
 	}
 }
 
@@ -62,7 +82,7 @@ class MacroModal extends Modal {
 	settings: PluginSettings;
 	plugin: MacroPlugin;
 
-	constructor(app: typeof App, plugin: MacroPlugin, settings: PluginSettings) {
+	constructor(app: App, plugin: MacroPlugin, settings: PluginSettings) {
 		super(app);
 		this.settings = settings;
 		this.plugin = plugin;
@@ -70,9 +90,11 @@ class MacroModal extends Modal {
 
 	onOpen() {
 		ReactDOM.render(
-			React.createElement(MacroManageModal, {
+			React.createElement(Provider, {
+				store,
+			}, React.createElement(MacroManageModal, {
 				macros: this.settings.macros,
-			}),
+			})),
 			this.contentEl,
 		);
 	}

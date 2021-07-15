@@ -19,18 +19,25 @@
   "license": "MIT",
   "devDependencies": {
     "@craco/craco": "^6.2.0",
+    "@reduxjs/toolkit": "^1.6.0",
     "@rollup/plugin-commonjs": "^18.0.0",
     "@rollup/plugin-node-resolve": "^11.2.1",
     "@rollup/plugin-typescript": "^8.2.1",
     "@types/node": "^14.14.37",
     "@types/react": "^17.0.14",
     "@types/react-dom": "^17.0.9",
+    "@types/styled-components": "^5.1.11",
+    "@types/uuid": "^8.3.1",
     "html-webpack-plugin": "^4.4.1",
     "npm-watch": "^0.10.0",
     "obsidian": "^0.12.0",
+    "react-redux": "^7.2.4",
+    "redux": "^4.1.0",
     "rollup": "^2.32.1",
+    "styled-components": "^5.3.0",
     "tslib": "^2.2.0",
-    "typescript": "^4.2.4"
+    "typescript": "^4.2.4",
+    "uuid": "^8.3.2"
   },
   "dependencies": {
     "react": "^17.0.2",

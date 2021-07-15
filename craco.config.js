@@ -18,7 +18,7 @@ module.exports = {
       externals: {
         obsidian: 'obsidian',
       },
-      devtool: 'inline-cheap-source-map',
+      devtool: false,
       optimization: {
         minimize: false,
         runtimeChunk: false,
