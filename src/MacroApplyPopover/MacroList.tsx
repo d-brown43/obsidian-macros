@@ -50,6 +50,7 @@ const MacroList = ({ macros, setSelectedMacroId }: Props) => {
     <>
       {macros.map((macro, i) => (
         <MacroItem
+          key={macro.id}
           macro={macro}
           setSelectedMacroId={setSelectedMacroId}
           doFocus={!focused && i === 0}

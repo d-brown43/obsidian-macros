@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom";
 import React from "react";
-import { App, Modal, Plugin, debounce, HoverPopover, HoverParent } from 'obsidian';
+import { App, Modal, Plugin, debounce } from 'obsidian';
 import MacroManageModal from './MacroManageModal';
 import {PluginSettings} from "./types";
 import {Provider} from "react-redux";
@@ -9,6 +9,7 @@ import {Unsubscribe} from "redux";
 import {rehydrate} from "./redux/hydration";
 import MacroApplyPopover from "./MacroApplyPopover";
 import * as CodeMirror from "codemirror";
+import {closeApplyMacro, openApplyMacro } from "./redux/ui";
 
 const DEFAULT_SETTINGS: PluginSettings = {
 	macros: [],
@@ -67,29 +68,40 @@ export default class MacroPlugin extends Plugin {
 		this.addCommand({
 			id: 'apply-macro',
 			name: 'Apply Macro',
-			callback: () => {
-				const element = this.app.workspace.containerEl.createDiv();
-				this.codeMirror?.addWidget(this.codeMirror?.getCursor(), element, true);
-				const close = () => {
-					element.parentNode?.removeChild(element);
-				};
-				ReactDOM.render(
-					React.createElement(
-						Provider,
-						{ store },
-						React.createElement(
-							MacroApplyPopover,
-							{
-								close,
-								applyMacro: resolvedValue => {
-									close();
-									this.applyMacro(resolvedValue);
-									this.codeMirror?.focus();
-								}
-							}
-						)
-					), element);
-			}
+			checkCallback: (checking: boolean) => {
+				const leaf = this.app.workspace.activeLeaf;
+				const isApplyingMacro = store.getState().ui.applyingMacro;
+				if (leaf && !isApplyingMacro) {
+					if (!checking) {
+						store.dispatch(openApplyMacro());
+						const element = this.app.workspace.containerEl.createDiv();
+						this.codeMirror?.addWidget(this.codeMirror?.getCursor(), element, true);
+						const close = () => {
+							ReactDOM.unmountComponentAtNode(element);
+							element.parentNode?.removeChild(element);
+							store.dispatch(closeApplyMacro());
+						};
+						ReactDOM.render(
+							React.createElement(
+								Provider,
+								{ store },
+								React.createElement(
+									MacroApplyPopover,
+									{
+										close,
+										applyMacro: resolvedValue => {
+											close();
+											this.applyMacro(resolvedValue);
+											this.codeMirror?.focus();
+										}
+									}
+								)
+							), element);
+					}
+					return true;
+				}
+				return false;
+			},
 		});
 	}
 
@@ -131,6 +143,7 @@ class ManageMacroModal extends Modal {
 
 	onClose() {
 		let {contentEl} = this;
+		ReactDOM.unmountComponentAtNode(contentEl);
 		contentEl.empty();
 	}
 }
