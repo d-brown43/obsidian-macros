@@ -1,12 +1,14 @@
 import ReactDOM from "react-dom";
 import React from "react";
-import { App, Modal, Plugin } from 'obsidian';
+import { App, Modal, Plugin, debounce, HoverPopover, HoverParent } from 'obsidian';
 import MacroManageModal from './MacroManageModal';
 import {PluginSettings} from "./types";
 import {Provider} from "react-redux";
 import store from "./redux";
 import {Unsubscribe} from "redux";
 import {rehydrate} from "./redux/hydration";
+import MacroApplyPopover from "./MacroApplyPopover";
+import * as CodeMirror from "codemirror";
 
 const DEFAULT_SETTINGS: PluginSettings = {
 	macros: [],
@@ -15,25 +17,26 @@ const DEFAULT_SETTINGS: PluginSettings = {
 export default class MacroPlugin extends Plugin {
 	settings: PluginSettings = DEFAULT_SETTINGS;
 	storeUnsubscribe: Unsubscribe | null = null;
+	codeMirror: CodeMirror.Editor | null = null;
 
 	subscribeToStore() {
-		let timerId: NodeJS.Timeout | null = null;
 		let promise = Promise.resolve();
-		this.storeUnsubscribe = store.subscribe(() => {
-			if (timerId) {
-				clearTimeout(timerId);
-			}
-			timerId = setTimeout(() => {
-				promise = promise.then(() => {
-					this.saveSettings();
-				});
-			}, 1000);
-		});
+		const updateSettings = debounce(() => {
+			promise = promise.then(() => {
+				this.saveSettings();
+			});
+		}, 1000, true);
+
+		store.subscribe(updateSettings);
 	}
 
 	async rehydrate() {
 		const settings = await this.loadData();
 		store.dispatch(rehydrate(settings.macros));
+	}
+
+	applyMacro(resolvedMacro: string) {
+		this.codeMirror?.getDoc().replaceSelection(resolvedMacro);
 	}
 
 	async onload() {
@@ -42,21 +45,50 @@ export default class MacroPlugin extends Plugin {
 		await this.rehydrate();
 		this.subscribeToStore();
 
+		this.registerCodeMirror(cm => {
+			this.codeMirror = cm;
+		});
+
 		this.addCommand({
 			id: 'macro',
 			name: 'Manage Macros',
-			// callback: () => {
-			// 	console.log('Simple Callback');
-			// },
 			checkCallback: (checking: boolean) => {
 				let leaf = this.app.workspace.activeLeaf;
 				if (leaf) {
 					if (!checking) {
-						new MacroModal(this.app, this, this.settings).open();
+						new ManageMacroModal(this.app, this).open();
 					}
 					return true;
 				}
 				return false;
+			}
+		});
+
+		this.addCommand({
+			id: 'apply-macro',
+			name: 'Apply Macro',
+			callback: () => {
+				const element = this.app.workspace.containerEl.createDiv();
+				this.codeMirror?.addWidget(this.codeMirror?.getCursor(), element, true);
+				const close = () => {
+					element.parentNode?.removeChild(element);
+				};
+				ReactDOM.render(
+					React.createElement(
+						Provider,
+						{ store },
+						React.createElement(
+							MacroApplyPopover,
+							{
+								close,
+								applyMacro: resolvedValue => {
+									close();
+									this.applyMacro(resolvedValue);
+									this.codeMirror?.focus();
+								}
+							}
+						)
+					), element);
 			}
 		});
 	}
@@ -78,23 +110,21 @@ export default class MacroPlugin extends Plugin {
 	}
 }
 
-class MacroModal extends Modal {
-	settings: PluginSettings;
+class ManageMacroModal extends Modal {
 	plugin: MacroPlugin;
 
-	constructor(app: App, plugin: MacroPlugin, settings: PluginSettings) {
+	constructor(app: App, plugin: MacroPlugin) {
 		super(app);
-		this.settings = settings;
 		this.plugin = plugin;
 	}
 
 	onOpen() {
 		ReactDOM.render(
-			React.createElement(Provider, {
-				store,
-			}, React.createElement(MacroManageModal, {
-				macros: this.settings.macros,
-			})),
+			React.createElement(
+				Provider,
+				{ store },
+				React.createElement(MacroManageModal)
+			),
 			this.contentEl,
 		);
 	}
