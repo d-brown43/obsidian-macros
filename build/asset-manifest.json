@@ -1,0 +1,11 @@
+{
+  "files": {
+    "index.js": "/../demo-vault/.obsidian/plugins/obsidian-macros/index/index.js",
+    "main.js": "/../demo-vault/.obsidian/plugins/obsidian-macros/main/main.js",
+    "../demo-vault/.obsidian/plugins/obsidian-macros/index/index.js.LICENSE.txt": "/../demo-vault/.obsidian/plugins/obsidian-macros/index/index.js.LICENSE.txt",
+    "index.html": "/index.html"
+  },
+  "entrypoints": [
+    "../demo-vault/.obsidian/plugins/obsidian-macros/main/main.js"
+  ]
+}

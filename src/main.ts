@@ -1,4 +1,4 @@
-import { App, Modal, Notice, Plugin, PluginSettingTab, Setting, TextComponent } from 'obsidian';
+import { App, Modal, Plugin } from 'obsidian';
 
 type Macro = {
 	text: string;
@@ -13,12 +13,12 @@ const DEFAULT_SETTINGS: PluginSettings = {
 }
 
 export default class MacroPlugin extends Plugin {
-	settings: PluginSettings;
+	settings: PluginSettings = DEFAULT_SETTINGS;
 
 	async onload() {
 		console.log('loading plugin');
 
-		await this.loadSettings();
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 
 		// this.addRibbonIcon('dice', 'Sample Plugin', () => {
 		// 	new Notice('This is a notice!');
@@ -55,10 +55,6 @@ export default class MacroPlugin extends Plugin {
 
 	onunload() {
 		console.log('unloading plugin');
-	}
-
-	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
 
 	async saveSettings() {
@@ -145,34 +141,5 @@ class MacroModal extends Modal {
 	onClose() {
 		let {contentEl} = this;
 		contentEl.empty();
-	}
-}
-
-class SampleSettingTab extends PluginSettingTab {
-	plugin: MacroPlugin;
-
-	constructor(app: App, plugin: MacroPlugin) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
-
-	display(): void {
-		let {containerEl} = this;
-
-		containerEl.empty();
-
-		containerEl.createEl('h2', {text: 'Settings for Obsidian Macros'});
-
-		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue('')
-				.onChange(async (value) => {
-					console.log('Secret: ' + value);
-					this.plugin.settings.mySetting = value;
-					await this.plugin.saveSettings();
-				}));
 	}
 }
