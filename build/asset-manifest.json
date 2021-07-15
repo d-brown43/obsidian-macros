@@ -1,11 +1,9 @@
 {
   "files": {
-    "index.js": "/../demo-vault/.obsidian/plugins/obsidian-macros/index/index.js",
-    "main.js": "/../demo-vault/.obsidian/plugins/obsidian-macros/main/main.js",
-    "../demo-vault/.obsidian/plugins/obsidian-macros/index/index.js.LICENSE.txt": "/../demo-vault/.obsidian/plugins/obsidian-macros/index/index.js.LICENSE.txt",
-    "index.html": "/index.html"
+    "main.js": "/main.js"
   },
   "entrypoints": [
-    "../demo-vault/.obsidian/plugins/obsidian-macros/main/main.js"
+    "main.js",
+    "main.30ab17cdd0af8e944aeb.hot-update.js"
   ]
 }

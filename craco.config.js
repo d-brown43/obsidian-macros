@@ -1,28 +1,35 @@
+const path = require('path');
+
 module.exports = {
+  devServer: {
+    writeToDisk: true,
+    hot: false,
+    inline: false,
+    liveReload: false
+  },
   webpack: {
     configure: {
-      entry: {
-        main: './src/main.ts',
-        index: './src/index.js',
-      },
+      entry: './src/main.ts',
       output: {
-        filename: '../demo-vault/.obsidian/plugins/obsidian-macros/[name]/[name].js',
+        path: path.resolve(__dirname, './build'),
+        filename: '[name].js',
+        libraryTarget: 'commonjs'
       },
       externals: {
         obsidian: 'obsidian',
       },
       devtool: 'inline-cheap-source-map',
       optimization: {
+        minimize: false,
         runtimeChunk: false,
         splitChunks: {
           chunks: 'all',
           cacheGroups: {
             default: false,
             vendors: false,
-            // vendor chunk
           },
         },
       },
-    },
+    }
   },
 }

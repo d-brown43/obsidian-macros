@@ -12,3 +12,7 @@ main.js
 
 # obsidian
 data.json
+
+build
+build/
+build/**/*
