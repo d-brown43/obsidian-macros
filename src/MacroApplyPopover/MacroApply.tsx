@@ -3,8 +3,10 @@ import {RootState} from "../redux";
 import MacroInput from "./MacroInput";
 import {useEffect, useState} from "react";
 import styled from "styled-components";
+import Button from "../components/Button";
+import { Macro as MacroType } from '../types';
 
-const ApplyButton = styled.button`
+const ApplyButton = styled(Button)`
     
 `;
 
@@ -20,11 +22,7 @@ const MacroApply = ({ selectedMacroId, applyMacro }: Props) => {
     (state: RootState) => state.macro.find(
       macro => macro.id === selectedMacroId
     )
-  );
-
-  if (!macro) {
-    return null;
-  }
+  ) as MacroType;
 
   const parts = macro.text.match(/{([^}]+)}/g) || [];
   const variableNames = parts.map(
@@ -47,6 +45,12 @@ const MacroApply = ({ selectedMacroId, applyMacro }: Props) => {
 
     applyMacro(result);
   };
+
+  useEffect(() => {
+    if (uniqueVariableNames.length === 0) {
+      apply();
+    }
+  }, [uniqueVariableNames.length]);
 
   return (
     <div>

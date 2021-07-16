@@ -1,9 +1,29 @@
 import {Macro} from "../types";
 import styled from "styled-components";
-import {useEffect, useRef, useState} from "react";
+import {useFocus, useHasUpdated} from "./hooks";
+import Button from "../components/Button";
 
-const MacroSelect = styled.button`
-  margin-top: 0.5rem;
+const MacroSelect = styled(Button)`
+  margin: 0;
+  max-width: 20rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const MacroRow = styled.div`
+  margin-bottom: 0.5rem !important;
+  display: flex;
+  flex-direction: row;
+`;
+
+const Label = styled.span`
+  display: block;
+  margin-right: 0.5rem;
+  width: 7rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const MacroItem = ({
@@ -15,22 +35,21 @@ const MacroItem = ({
   setSelectedMacroId: (id: string) => void,
   doFocus: boolean
 }) => {
-  const ref = useRef<null | HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (doFocus) {
-      ref.current?.focus();
-    }
-  }, [doFocus]);
+  const ref = useFocus<HTMLButtonElement>(doFocus);
 
   return (
-    <MacroSelect
-      ref={ref}
-      key={macro.id}
-      onClick={() => setSelectedMacroId(macro.id)}
-    >
-      {macro.text}
-    </MacroSelect>
+    <MacroRow>
+      <Label>
+        {macro.label}
+      </Label>
+      <MacroSelect
+        ref={ref}
+        key={macro.id}
+        onClick={() => setSelectedMacroId(macro.id)}
+      >
+        {macro.text}
+      </MacroSelect>
+    </MacroRow>
   );
 };
 
@@ -40,11 +59,7 @@ type Props = {
 };
 
 const MacroList = ({ macros, setSelectedMacroId }: Props) => {
-  const [focused, setFocused] = useState(false);
-
-  useEffect(() => {
-    setFocused(true);
-  }, []);
+  const hasUpdated = useHasUpdated();
 
   return (
     <>
@@ -53,7 +68,7 @@ const MacroList = ({ macros, setSelectedMacroId }: Props) => {
           key={macro.id}
           macro={macro}
           setSelectedMacroId={setSelectedMacroId}
-          doFocus={!focused && i === 0}
+          doFocus={!hasUpdated && i === 0}
         />
       ))}
     </>

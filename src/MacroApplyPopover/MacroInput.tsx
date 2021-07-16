@@ -1,5 +1,10 @@
 import {useEffect, useState} from "react";
-import MacroSingleApple from "./MacroSingleApple";
+import MacroSingleApple from "./MacroSingleApply";
+import styled from "styled-components";
+
+const VariableRow = styled.div`
+  margin-bottom: 0.5rem;
+`;
 
 type Props = {
   variableNames: string[];
@@ -17,14 +22,14 @@ const MacroInput = ({ variableNames, getValue, setValue }: Props) => {
   return (
     <>
       {variableNames.map((variableName, i) => (
-        <div key={variableName}>
+        <VariableRow key={variableName}>
           <MacroSingleApple
             placeholder={variableName}
             value={getValue(variableName)}
             setValue={value => setValue(variableName, value)}
             doFocus={!hasFocused && i === 0}
           />
-        </div>
+        </VariableRow>
       ))}
     </>
   );
