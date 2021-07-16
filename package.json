@@ -31,6 +31,7 @@
     "html-webpack-plugin": "^4.4.1",
     "npm-watch": "^0.10.0",
     "obsidian": "^0.12.0",
+    "prettier": "^2.3.2",
     "react-redux": "^7.2.4",
     "redux": "^4.1.0",
     "rollup": "^2.32.1",

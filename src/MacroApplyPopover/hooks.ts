@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const useHasUpdated = () => {
   const [hasUpdated, setHasUpdated] = useState(false);
@@ -10,7 +10,9 @@ export const useHasUpdated = () => {
   return hasUpdated;
 };
 
-export const useFocus = <T extends { focus: () => void }>(shouldFocus: boolean) => {
+export const useFocus = <T extends { focus: () => void }>(
+  shouldFocus: boolean
+) => {
   const ref = useRef<T>(null);
 
   useEffect(() => {

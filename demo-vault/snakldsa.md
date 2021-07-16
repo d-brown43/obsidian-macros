@@ -1,1 +1,1 @@
-	[my link](https://google.com?q=test)
+	[my link](https://google.com?q=test)the macro stuff here

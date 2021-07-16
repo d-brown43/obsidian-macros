@@ -1,6 +1,6 @@
-import {Macro} from "../types";
+import { Macro } from "../types";
 import styled from "styled-components";
-import {useFocus, useHasUpdated} from "./hooks";
+import { useFocus, useHasUpdated } from "./hooks";
 import Button from "../components/Button";
 
 const MacroSelect = styled(Button)`
@@ -31,17 +31,15 @@ const MacroItem = ({
   setSelectedMacroId,
   doFocus,
 }: {
-  macro: Macro,
-  setSelectedMacroId: (id: string) => void,
-  doFocus: boolean
+  macro: Macro;
+  setSelectedMacroId: (id: string) => void;
+  doFocus: boolean;
 }) => {
   const ref = useFocus<HTMLButtonElement>(doFocus);
 
   return (
     <MacroRow>
-      <Label>
-        {macro.label}
-      </Label>
+      <Label>{macro.label}</Label>
       <MacroSelect
         ref={ref}
         key={macro.id}
@@ -72,7 +70,7 @@ const MacroList = ({ macros, setSelectedMacroId }: Props) => {
         />
       ))}
     </>
-  )
+  );
 };
 
 export default MacroList;

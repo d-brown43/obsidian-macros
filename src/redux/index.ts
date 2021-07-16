@@ -1,6 +1,6 @@
-import { configureStore } from '@reduxjs/toolkit'
-import macro from './macros';
-import ui from './ui';
+import { configureStore } from "@reduxjs/toolkit";
+import macro from "./macros";
+import ui from "./ui";
 
 const store = configureStore({
   reducer: {
@@ -9,8 +9,8 @@ const store = configureStore({
   },
 });
 
-export type RootState = ReturnType<typeof store.getState>
+export type RootState = ReturnType<typeof store.getState>;
 
-export type AppDispatch = typeof store.dispatch
+export type AppDispatch = typeof store.dispatch;
 
 export default store;

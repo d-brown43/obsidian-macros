@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import MacroSingleApple from "./MacroSingleApply";
 import styled from "styled-components";
 
@@ -26,7 +26,7 @@ const MacroInput = ({ variableNames, getValue, setValue }: Props) => {
           <MacroSingleApple
             placeholder={variableName}
             value={getValue(variableName)}
-            setValue={value => setValue(variableName, value)}
+            setValue={(value) => setValue(variableName, value)}
             doFocus={!hasFocused && i === 0}
           />
         </VariableRow>
