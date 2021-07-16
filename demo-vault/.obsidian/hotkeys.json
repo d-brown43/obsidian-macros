@@ -1,1 +1,10 @@
-{}
+{
+  "obsidian-macros:apply-macro": [
+    {
+      "modifiers": [
+        "Mod"
+      ],
+      "key": "H"
+    }
+  ]
+}

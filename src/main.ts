@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom";
 import React from "react";
-import { App, Modal, Plugin, debounce } from 'obsidian';
+import {App, Modal, Plugin, debounce, MarkdownView} from 'obsidian';
 import MacroManageModal from './MacroManageModal';
 import {PluginSettings} from "./types";
 import {Provider} from "react-redux";
@@ -18,7 +18,7 @@ const DEFAULT_SETTINGS: PluginSettings = {
 export default class MacroPlugin extends Plugin {
 	settings: PluginSettings = DEFAULT_SETTINGS;
 	storeUnsubscribe: Unsubscribe | null = null;
-	codeMirror: CodeMirror.Editor | null = null;
+	codeMirrors: CodeMirror.Editor[] = [];
 
 	subscribeToStore() {
 		let promise = Promise.resolve();
@@ -37,7 +37,18 @@ export default class MacroPlugin extends Plugin {
 	}
 
 	applyMacro(resolvedMacro: string) {
-		this.codeMirror?.getDoc().replaceSelection(resolvedMacro);
+		this.getMarkdownView()?.editor.replaceSelection(resolvedMacro);
+	}
+
+	getMarkdownView() {
+		if (this.app.workspace.activeLeaf.view.getViewType() === 'markdown') {
+			return this.app.workspace.activeLeaf.view as MarkdownView;
+		}
+		return null;
+	}
+
+	isSourceMode(): boolean {
+		return this.getMarkdownView()?.getMode() === 'source';
 	}
 
 	async onload() {
@@ -47,7 +58,7 @@ export default class MacroPlugin extends Plugin {
 		this.subscribeToStore();
 
 		this.registerCodeMirror(cm => {
-			this.codeMirror = cm;
+			this.codeMirrors.push(cm);
 		});
 
 		this.addCommand({
@@ -71,15 +82,28 @@ export default class MacroPlugin extends Plugin {
 			checkCallback: (checking: boolean) => {
 				const leaf = this.app.workspace.activeLeaf;
 				const isApplyingMacro = store.getState().ui.applyingMacro;
-				if (leaf && !isApplyingMacro) {
+
+				const isSourceMode = this.isSourceMode();
+				const markdownView = this.getMarkdownView();
+
+				if (leaf && !isApplyingMacro && isSourceMode && markdownView) {
 					if (!checking) {
 						store.dispatch(openApplyMacro());
-						const element = this.app.workspace.containerEl.createDiv();
-						this.codeMirror?.addWidget(this.codeMirror?.getCursor(), element, true);
+
+						const codeMirror = (this.app.workspace.activeLeaf as any).view.currentMode.cmEditor;
+
+						const containerEl = document.body;
+
+						const element = containerEl.createEl('div');
+						element.style.position = 'absolute';
+						element.style.top = '0';
+						element.style.left = '0';
+
 						const close = () => {
 							ReactDOM.unmountComponentAtNode(element);
 							element.parentNode?.removeChild(element);
 							store.dispatch(closeApplyMacro());
+							codeMirror.focus();
 						};
 						ReactDOM.render(
 							React.createElement(
@@ -89,10 +113,12 @@ export default class MacroPlugin extends Plugin {
 									MacroApplyPopover,
 									{
 										close,
+										getCursorPosition: () => {
+											return codeMirror.cursorCoords(false, 'page');
+										},
 										applyMacro: resolvedValue => {
 											close();
 											this.applyMacro(resolvedValue);
-											this.codeMirror?.focus();
 										}
 									}
 								)

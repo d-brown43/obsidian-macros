@@ -4,52 +4,69 @@
     "type": "split",
     "children": [
       {
-        "id": "ff1f51973910652e",
-        "type": "leaf",
-        "state": {
-          "type": "markdown",
-          "state": {
-            "file": "Untitled.md",
-            "mode": "source"
+        "id": "07010091217e084b",
+        "type": "split",
+        "children": [
+          {
+            "id": "98c48d920121b585",
+            "type": "split",
+            "children": [
+              {
+                "id": "ff1f51973910652e",
+                "type": "leaf",
+                "state": {
+                  "type": "markdown",
+                  "state": {
+                    "file": "snakldsa.md",
+                    "mode": "source"
+                  }
+                }
+              },
+              {
+                "id": "0571b313bd9e2ae8",
+                "type": "leaf",
+                "state": {
+                  "type": "markdown",
+                  "state": {
+                    "file": "snakldsa.md",
+                    "mode": "preview"
+                  }
+                }
+              }
+            ],
+            "direction": "vertical"
+          },
+          {
+            "id": "49894582eb979d47",
+            "type": "split",
+            "children": [
+              {
+                "id": "d10164250ad2bb9d",
+                "type": "leaf",
+                "state": {
+                  "type": "markdown",
+                  "state": {
+                    "file": "Untitled.md",
+                    "mode": "source"
+                  }
+                }
+              },
+              {
+                "id": "3a4ad9a9767bee3a",
+                "type": "leaf",
+                "state": {
+                  "type": "markdown",
+                  "state": {
+                    "file": "Untitled.md",
+                    "mode": "source"
+                  }
+                }
+              }
+            ],
+            "direction": "vertical"
           }
-        },
-        "group": "5b7f5ab5ac32b6f9"
-      },
-      {
-        "id": "107a82e52d78f35f",
-        "type": "leaf",
-        "state": {
-          "type": "localgraph",
-          "state": {
-            "file": "Untitled.md",
-            "options": {
-              "collapse-filter": true,
-              "search": "",
-              "localJumps": 1,
-              "localBacklinks": true,
-              "localForelinks": true,
-              "localInterlinks": false,
-              "showTags": false,
-              "showAttachments": false,
-              "hideUnresolved": false,
-              "collapse-color-groups": true,
-              "colorGroups": [],
-              "collapse-display": true,
-              "showArrow": false,
-              "textFadeMultiplier": 0,
-              "nodeSizeMultiplier": 1,
-              "lineSizeMultiplier": 1,
-              "collapse-forces": true,
-              "centerStrength": 0.518713248970312,
-              "repelStrength": 10,
-              "linkStrength": 1,
-              "linkDistance": 250,
-              "scale": 1,
-              "close": false
-            }
-          }
-        },
-        "group": "5b7f5ab5ac32b6f9"
+        ],
+        "direction": "horizontal"
       }
     ],
     "direction": "vertical"
@@ -105,7 +122,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Untitled.md",
+                "file": "snakldsa.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -123,9 +140,11 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "ff1f51973910652e",
+  "active": "0571b313bd9e2ae8",
   "lastOpenFiles": [
+    "snakldsa.md",
     "Untitled.md",
+    "Untitled 1.md",
     "Test file.md"
   ]
 }

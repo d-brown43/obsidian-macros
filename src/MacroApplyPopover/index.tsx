@@ -1,12 +1,19 @@
 import styled from "styled-components";
 import {useSelector} from "react-redux";
 import {RootState} from "../redux";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import MacroList from "./MacroList";
 import MacroApply from "./MacroApply";
 
+type CursorPosition = {
+  top: number;
+  left: number;
+}
+
 const Container = styled.div`
   position: absolute;
+  top: ${({ position }: { position: CursorPosition }) => position.top}px;
+  left: ${({ position }: { position: CursorPosition }) => position.left}px;
   background: var(--background-primary);
   width: 500px;
   height: 200px;
@@ -25,16 +32,23 @@ const CloseButton = styled.button`
 type Props = {
   close: () => void;
   applyMacro: (resolvedValue: string) => void;
+  getCursorPosition: () => CursorPosition;
 }
 
-const MacroApplyPopover = ({ close, applyMacro }: Props) => {
+const MacroApplyPopover = ({ getCursorPosition, close, applyMacro }: Props) => {
   const [selectedMacroId, setSelectedMacroId] = useState<string | null>(null);
   const macros = useSelector((state: RootState) => state.macro);
   const containerRef = useRef<null | HTMLDivElement>(null);
 
+  useEffect(() => {
+    console.log('position', getCursorPosition());
+    // console.log('cursorXY', getCursorXY(containerEl as HTMLInputElement, getCharacterOffset()));
+  }, []);
+
   return (
     <Container
       ref={containerRef}
+      position={getCursorPosition()}
       onKeyDown={(e) => {
         if (e.key === 'Escape') {
           close();

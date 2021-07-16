@@ -1,7 +1,7 @@
 import {useSelector} from "react-redux";
 import {RootState} from "../redux";
 import MacroInput from "./MacroInput";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import styled from "styled-components";
 
 const ApplyButton = styled.button`
