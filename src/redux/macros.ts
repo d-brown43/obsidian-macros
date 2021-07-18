@@ -1,8 +1,8 @@
-import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 import { Macro } from '../types';
 import { rehydrate } from './hydration';
-import { RootState } from "./index";
+import { RootState } from './index';
 
 export type MacroState = Macro[];
 
@@ -12,7 +12,7 @@ export const macroSlice = createSlice({
   name: 'macro',
   initialState,
   reducers: {
-    createMacro: (state, action: PayloadAction<Omit<Macro, 'id'>>) => {
+    createMacro: (state, action: PayloadAction<Omit<Macro, 'id'> & { id?: Macro['id'] }>) => {
       state.push({
         id: uuidv4(),
         ...action.payload,
@@ -36,12 +36,7 @@ export const macroSlice = createSlice({
   },
 });
 
-const getSelf = (state: RootState) => state.macro;
-
-export const getMacro = (macroId: Macro['id']) => createSelector(
-  getSelf,
-  macroSlice => macroSlice.find(m => m.id === macroId),
-);
+export const getMacros = (state: RootState) => state.macro;
 
 export const { createMacro, updateMacro, deleteMacro } = macroSlice.actions;
 

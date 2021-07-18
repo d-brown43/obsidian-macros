@@ -1,6 +1,6 @@
 import MacroSingleApply from './MacroSingleApply';
 import styled from 'styled-components';
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 const VariableRow = styled.div`
   margin-bottom: 0.5rem;
@@ -13,7 +13,12 @@ type Props = {
   applyMacro: () => void;
 };
 
-const MacroInput = ({ variableNames, getValue, setValue, applyMacro }: Props) => {
+const MacroInput = ({
+  variableNames,
+  getValue,
+  setValue,
+  applyMacro,
+}: Props) => {
   const [focusIndex, setFocusIndex] = useState(0);
 
   useEffect(() => {
@@ -22,7 +27,7 @@ const MacroInput = ({ variableNames, getValue, setValue, applyMacro }: Props) =>
     }
   }, [focusIndex]);
 
-  const apply = () => setFocusIndex(prevIndex => prevIndex + 1);
+  const apply = () => setFocusIndex((prevIndex) => prevIndex + 1);
 
   return (
     <>
@@ -36,6 +41,7 @@ const MacroInput = ({ variableNames, getValue, setValue, applyMacro }: Props) =>
               setValue={(value) => setValue(variableName, value)}
               doFocus={shouldFocus}
               apply={apply}
+              testId={`variable-input-${variableName}`}
             />
           </VariableRow>
         );

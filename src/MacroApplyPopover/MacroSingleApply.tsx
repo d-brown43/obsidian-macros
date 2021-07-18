@@ -1,5 +1,5 @@
 import { useFocus } from './hooks';
-import React from "react";
+import React from 'react';
 
 type Props = {
   value: string;
@@ -7,9 +7,17 @@ type Props = {
   doFocus: boolean;
   placeholder: string;
   apply: () => void;
+  testId: string;
 };
 
-const MacroSingleApply = ({ value, setValue, doFocus, placeholder, apply }: Props) => {
+const MacroSingleApply = ({
+  value,
+  setValue,
+  doFocus,
+  placeholder,
+  apply,
+  testId,
+}: Props) => {
   const ref = useFocus<HTMLInputElement>(doFocus);
 
   const onKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -20,11 +28,12 @@ const MacroSingleApply = ({ value, setValue, doFocus, placeholder, apply }: Prop
 
   return (
     <input
+      data-testid={testId}
       ref={ref}
       type="text"
       placeholder={placeholder}
       value={value}
-      onChange={e => setValue(e.target.value)}
+      onChange={(e) => setValue(e.target.value)}
       onKeyDown={onKeydown}
     />
   );

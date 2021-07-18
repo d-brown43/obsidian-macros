@@ -4,35 +4,28 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import Button from '../components/Button';
 import { Macro as MacroType } from '../types';
-import {
-  applyReplacements,
-  identifyVariables,
-} from '../utils/identifyVariables';
-import { getMacro } from '../redux/macros';
+import { applyReplacements, identifyMacros } from '../utils';
+import { getSelectedMacro } from '../redux';
 
 const ApplyButton = styled(Button)``;
 
 type Props = {
-  selectedMacroId: MacroType['id'];
   applyMacro: (resolved: string) => void;
 };
 
-const MacroApply = ({ selectedMacroId, applyMacro }: Props) => {
+const MacroApply = ({ applyMacro }: Props) => {
   const [content, setContent] = useState<{ [key: string]: string }>({});
-
-  const macro = useSelector(
-    useMemo(() => getMacro(selectedMacroId), [selectedMacroId])
-  ) as MacroType;
+  const macro = useSelector(getSelectedMacro) as MacroType;
 
   const identifiedVariables = useMemo(
-    () => identifyVariables(macro.text),
+    () => identifyMacros(macro.text),
     [macro.text]
   );
 
   const getContent = (variableName: string) => content[variableName] || '';
 
   const apply = useCallback(() => {
-    applyMacro(applyReplacements(identifiedVariables, content, macro.text));
+    applyMacro(applyReplacements(identifiedVariables, getContent, macro.text));
   }, [applyMacro, identifiedVariables, content, macro.text]);
 
   useEffect(() => {
@@ -54,7 +47,11 @@ const MacroApply = ({ selectedMacroId, applyMacro }: Props) => {
         }
         applyMacro={apply}
       />
-      <ApplyButton type="button" onClick={apply}>
+      <ApplyButton
+        type="button"
+        onClick={apply}
+        data-testid="confirm-variables"
+      >
         Apply
       </ApplyButton>
     </div>

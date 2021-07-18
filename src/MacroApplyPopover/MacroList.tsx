@@ -2,6 +2,8 @@ import { Macro } from '../types';
 import styled from 'styled-components';
 import { useFocus, useHasUpdated } from './hooks';
 import Button from '../components/Button';
+import { useDispatch } from "react-redux";
+import { selectMacro } from "../redux/ui";
 
 const MacroSelect = styled(Button)`
   margin: 0;
@@ -28,14 +30,14 @@ const Label = styled.span`
 
 const MacroItem = ({
   macro,
-  setSelectedMacroId,
   doFocus,
 }: {
   macro: Macro;
-  setSelectedMacroId: (id: string) => void;
   doFocus: boolean;
 }) => {
   const ref = useFocus<HTMLButtonElement>(doFocus);
+  const dispatch = useDispatch();
+  const onClick = () => dispatch(selectMacro(macro.id));
 
   return (
     <MacroRow>
@@ -43,7 +45,7 @@ const MacroItem = ({
       <MacroSelect
         ref={ref}
         key={macro.id}
-        onClick={() => setSelectedMacroId(macro.id)}
+        onClick={onClick}
       >
         {macro.text}
       </MacroSelect>
@@ -53,10 +55,9 @@ const MacroItem = ({
 
 type Props = {
   macros: Macro[];
-  setSelectedMacroId: (id: string) => void;
 };
 
-const MacroList = ({ macros, setSelectedMacroId }: Props) => {
+const MacroList = ({ macros }: Props) => {
   const hasUpdated = useHasUpdated();
 
   return (
@@ -65,7 +66,6 @@ const MacroList = ({ macros, setSelectedMacroId }: Props) => {
         <MacroItem
           key={macro.id}
           macro={macro}
-          setSelectedMacroId={setSelectedMacroId}
           doFocus={!hasUpdated && i === 0}
         />
       ))}
