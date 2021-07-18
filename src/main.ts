@@ -109,10 +109,9 @@ export default class MacroPlugin extends Plugin {
         const leaf = this.app.workspace.activeLeaf;
         const isApplyingMacro = store.getState().ui.applyingMacro;
 
-        const isSourceMode = this.isSourceMode();
         const markdownView = this.getMarkdownView();
 
-        if (leaf && !isApplyingMacro && isSourceMode && markdownView) {
+        if (leaf && !isApplyingMacro && markdownView) {
           if (!checking) {
             store.dispatch(openApplyMacro());
 
