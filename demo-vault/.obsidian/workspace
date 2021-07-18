@@ -104,7 +104,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "snakldsa.md",
+                "file": "Untitled.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -122,11 +122,11 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "ff1f51973910652e",
+  "active": "d10164250ad2bb9d",
   "lastOpenFiles": [
+    "Untitled.md",
     "snakldsa.md",
     "my info.md",
-    "Untitled.md",
     "Untitled 1.md",
     "Test file.md"
   ]

@@ -1,20 +1,22 @@
-import { useEffect, useRef } from 'react';
+import { useFocus } from './hooks';
+import React from "react";
 
 type Props = {
   value: string;
   setValue: (value: string) => void;
   doFocus: boolean;
   placeholder: string;
+  apply: () => void;
 };
 
-const MacroSingleApply = ({ value, setValue, doFocus, placeholder }: Props) => {
-  const ref = useRef<null | HTMLInputElement>(null);
+const MacroSingleApply = ({ value, setValue, doFocus, placeholder, apply }: Props) => {
+  const ref = useFocus<HTMLInputElement>(doFocus);
 
-  useEffect(() => {
-    if (doFocus) {
-      ref.current?.focus();
+  const onKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      apply();
     }
-  }, [doFocus]);
+  };
 
   return (
     <input
@@ -22,7 +24,8 @@ const MacroSingleApply = ({ value, setValue, doFocus, placeholder }: Props) => {
       type="text"
       placeholder={placeholder}
       value={value}
-      onChange={(e) => setValue(e.target.value)}
+      onChange={e => setValue(e.target.value)}
+      onKeyDown={onKeydown}
     />
   );
 };

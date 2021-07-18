@@ -1,5 +1,4 @@
 import { useSelector } from 'react-redux';
-import { RootState } from '../redux';
 import MacroInput from './MacroInput';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
@@ -9,25 +8,28 @@ import {
   applyReplacements,
   identifyVariables,
 } from '../utils/identifyVariables';
+import { getMacro } from '../redux/macros';
 
 const ApplyButton = styled(Button)``;
 
 type Props = {
-  selectedMacroId: string;
+  selectedMacroId: MacroType['id'];
   applyMacro: (resolved: string) => void;
 };
 
 const MacroApply = ({ selectedMacroId, applyMacro }: Props) => {
   const [content, setContent] = useState<{ [key: string]: string }>({});
 
-  const macro = useSelector((state: RootState) =>
-    state.macro.find((macro) => macro.id === selectedMacroId)
+  const macro = useSelector(
+    useMemo(() => getMacro(selectedMacroId), [selectedMacroId])
   ) as MacroType;
 
   const identifiedVariables = useMemo(
     () => identifyVariables(macro.text),
     [macro.text]
   );
+
+  const getContent = (variableName: string) => content[variableName] || '';
 
   const apply = useCallback(() => {
     applyMacro(applyReplacements(identifiedVariables, content, macro.text));
@@ -43,13 +45,14 @@ const MacroApply = ({ selectedMacroId, applyMacro }: Props) => {
     <div>
       <MacroInput
         variableNames={identifiedVariables.variableNames}
-        getValue={(variableName) => content[variableName] || ''}
+        getValue={getContent}
         setValue={(variableName, value) =>
           setContent((prevState) => ({
             ...prevState,
             [variableName]: value,
           }))
         }
+        applyMacro={apply}
       />
       <ApplyButton type="button" onClick={apply}>
         Apply

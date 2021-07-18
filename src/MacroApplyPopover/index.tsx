@@ -51,6 +51,7 @@ const MacroApplyPopover = ({ getCursorPosition, close, applyMacro }: Props) => {
 
   useEffect(() => {
     const handler = (e: FocusEvent) => {
+      console.log('focus event', e);
       if (
         !e.target ||
         (e.target !== containerRef.current &&

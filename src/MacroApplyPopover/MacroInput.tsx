@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import MacroSingleApple from './MacroSingleApply';
+import MacroSingleApply from './MacroSingleApply';
 import styled from 'styled-components';
+import { useEffect, useState } from "react";
 
 const VariableRow = styled.div`
   margin-bottom: 0.5rem;
@@ -10,29 +10,37 @@ type Props = {
   variableNames: string[];
   getValue: (variableName: string) => string;
   setValue: (variableName: string, value: string) => void;
+  applyMacro: () => void;
 };
 
-const MacroInput = ({ variableNames, getValue, setValue }: Props) => {
-  const [hasFocused, setHasFocused] = useState(false);
+const MacroInput = ({ variableNames, getValue, setValue, applyMacro }: Props) => {
+  const [focusIndex, setFocusIndex] = useState(0);
 
   useEffect(() => {
-    setHasFocused(true);
-  }, []);
+    if (focusIndex === variableNames.length) {
+      applyMacro();
+    }
+  }, [focusIndex]);
+
+  const apply = () => setFocusIndex(prevIndex => prevIndex + 1);
 
   return (
     <>
-      {variableNames.map((variableName, i) => (
-        <VariableRow key={variableName}>
-          <MacroSingleApple
-            placeholder={variableName}
-            value={getValue(variableName)}
-            setValue={(value) => setValue(variableName, value)}
-            doFocus={!hasFocused && i === 0}
-          />
-        </VariableRow>
-      ))}
+      {variableNames.map((variableName, i) => {
+        const shouldFocus = focusIndex === i;
+        return (
+          <VariableRow key={variableName}>
+            <MacroSingleApply
+              placeholder={variableName}
+              value={getValue(variableName)}
+              setValue={(value) => setValue(variableName, value)}
+              doFocus={shouldFocus}
+              apply={apply}
+            />
+          </VariableRow>
+        );
+      })}
     </>
   );
 };
-
 export default MacroInput;
