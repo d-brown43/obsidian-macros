@@ -44,7 +44,7 @@ export const getIsMacroSelected = createSelector(
   macroId => macroId !== null
 );
 
-export const { openApplyMacro, closeApplyMacro, selectMacro, resetUi } =
+export const { openApplyMacro, closeApplyMacro, selectMacro, resetUi, clearSelectedMacro } =
   uiSlice.actions;
 
 export default uiSlice.reducer;

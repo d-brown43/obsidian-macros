@@ -51,7 +51,16 @@ describe('useFocus', () => {
 describe('useOnFocusOut', () => {
   it('calls the supplied callback when an external element is focused', () => {
     const callback = jest.fn();
-    const { result } = renderHook(() => useOnFocusOut(callback));
+    const fakeRef = { current: null };
+
+    const { result } = renderHook(
+      ({ ref }: { ref: { current: any } }) => useOnFocusOut(callback, ref),
+      {
+        initialProps: {
+          ref: fakeRef,
+        },
+      }
+    );
 
     const container = document.createElement('div');
     Object.assign(result.current, { current: container });
@@ -71,7 +80,11 @@ describe('useOnFocusOut', () => {
 
   it('does not call the supplied callback when internal element is focused', () => {
     const callback = jest.fn();
-    const { result } = renderHook(() => useOnFocusOut(callback));
+    const fakeRef = { current: null };
+    const { result } = renderHook(
+      ({ ref }: { ref: { current: any } }) => useOnFocusOut(callback, ref),
+      { initialProps: { ref: fakeRef } }
+    );
 
     const container = document.createElement('div');
     Object.assign(result.current, { current: container });

@@ -1,16 +1,16 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
-import { App, Modal, Plugin, debounce, MarkdownView } from "obsidian";
+import { App, Modal, Plugin, debounce, MarkdownView } from 'obsidian';
 import MacroManageModal from './MacroManageModal';
 import { PluginSettings } from './types';
 import { Provider } from 'react-redux';
-import store, { getMacros } from "./redux";
+import store, { getMacros, resetUi } from './redux';
 import { Unsubscribe } from 'redux';
 import { rehydrate } from './redux';
 import MacroApplyPopover from './MacroApplyPopover';
 import * as CodeMirror from 'codemirror';
 import { closeApplyMacro, openApplyMacro } from './redux';
-import { observeStore } from "./utils";
+import { observeStore } from './utils';
 
 const DEFAULT_SETTINGS: PluginSettings = {
   macros: [],
@@ -25,20 +25,18 @@ export default class MacroPlugin extends Plugin {
     let promise = Promise.resolve();
     const updateSettings = debounce(
       () => {
-        promise = promise.then(this.saveSettings);
+        promise = promise.then(() => this.saveSettings());
       },
       1000,
       true
     );
 
-    this.storeUnsubscribe = observeStore(
-      getMacros,
-      updateSettings,
-    );
+    this.storeUnsubscribe = observeStore(getMacros, updateSettings);
   }
 
   async rehydrate() {
     const settings = await this.loadData();
+    console.log('settings', settings);
     const settingsState = settings || DEFAULT_SETTINGS;
     store.dispatch(rehydrate(settingsState.macros));
   }
@@ -112,13 +110,15 @@ export default class MacroPlugin extends Plugin {
               element.parentNode?.removeChild(element);
               store.dispatch(closeApplyMacro());
               codeMirror.focus();
+              store.dispatch(resetUi());
             };
             ReactDOM.render(
               React.createElement(
                 Provider,
                 { store },
                 React.createElement(MacroApplyPopover, {
-                  close: this.closePopover,
+                  cursorElement: codeMirror.display.input.wrapper,
+                  close: () => this.closePopover(),
                   getCursorPosition: () => {
                     return codeMirror.cursorCoords(false, 'page');
                   },
@@ -179,5 +179,6 @@ class ManageMacroModal extends Modal {
     let { contentEl } = this;
     ReactDOM.unmountComponentAtNode(contentEl);
     contentEl.empty();
+    store.dispatch(resetUi());
   }
 }

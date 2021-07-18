@@ -5,12 +5,21 @@ import { Button } from '../components';
 import { Macro as MacroType } from '../types';
 import { applyReplacements, identifyMacros } from '../utils';
 import { getSelectedMacro } from '../redux';
+import styled from 'styled-components';
+
+const BackButton = styled(Button)`
+  position: absolute;
+  top: 0;
+  left: 0.5rem;
+  padding: 0;
+`;
 
 type Props = {
   applyMacro: (resolved: string) => void;
+  back: () => void;
 };
 
-const MacroApply = ({ applyMacro }: Props) => {
+const MacroApply = ({ applyMacro, back }: Props) => {
   const [content, setContent] = useState<{ [key: string]: string }>({});
   const macro = useSelector(getSelectedMacro) as MacroType;
 
@@ -33,6 +42,9 @@ const MacroApply = ({ applyMacro }: Props) => {
 
   return (
     <div>
+      <BackButton type="button" onClick={back}>
+        &#8592;
+      </BackButton>
       <MacroInput
         variableNames={identifiedVariables.variableNames}
         getValue={getContent}

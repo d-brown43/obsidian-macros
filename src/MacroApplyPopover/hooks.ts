@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useRef, useState } from 'react';
+import { MutableRefObject, RefObject, useEffect, useRef, useState } from "react";
 
 export const useHasUpdated = () => {
   const [hasUpdated, setHasUpdated] = useState(false);
@@ -25,10 +25,9 @@ export const useFocus = <T extends { focus: () => void }>(
 };
 
 export const useOnFocusOut = <R extends HTMLElement>(
-  callback: () => void
-): RefObject<R> => {
-  const containerRef = useRef<R>();
-
+  callback: () => void,
+  containerRef: MutableRefObject<R | null>
+) => {
   useEffect(() => {
     const handler = (e: FocusEvent) => {
       if (

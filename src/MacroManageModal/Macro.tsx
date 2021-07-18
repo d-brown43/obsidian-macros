@@ -32,11 +32,11 @@ const Macro = ({ macroId, className }: Props) => {
     let computedLabel = trimmedLabel;
     if (trimmedLabel === '') {
       computedLabel = macroText;
-      setLabel(macroText);
     }
     if (computedLabel === '') {
       computedLabel = 'Macro Label';
     }
+    setLabel(computedLabel);
     dispatch(
       updateMacro({
         ...macro,

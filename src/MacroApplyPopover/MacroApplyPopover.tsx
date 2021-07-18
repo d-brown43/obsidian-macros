@@ -1,11 +1,18 @@
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
-import { getIsMacroSelected } from '../redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { getIsMacroSelected, resetUi, clearSelectedMacro } from '../redux';
 import MacroList from './MacroList';
 import MacroApply from './MacroApply';
 import Button from '../components/Button';
 import { useOnFocusOut } from './hooks';
-import { BACKGROUND_COLOUR, BORDER_STYLING } from '../styling';
+import {
+  BACKGROUND_COLOUR,
+  BORDER_STYLING,
+  POPOVER_HEIGHT_REM,
+  POPOVER_WIDTH_REM,
+} from '../styling';
+import { MutableRefObject, useEffect, useRef, useState } from 'react';
+import { usePopper } from 'react-popper';
 
 type CursorPosition = {
   top: number;
@@ -26,12 +33,12 @@ const Container = styled.div`
   padding-bottom: 0.5rem;
   padding-left: 1rem;
   padding-right: 1rem;
-  width: 500px;
-  height: 200px;
+  width: ${POPOVER_WIDTH_REM}rem;
+  height: ${POPOVER_HEIGHT_REM}rem;
   z-index: 100;
-  box-shadow: 6px 4px 5px 0px rgba(0,0,0,0.49);
-  -webkit-box-shadow: 6px 4px 5px 0px rgba(0,0,0,0.49);
-  -moz-box-shadow: 6px 4px 5px 0px rgba(0,0,0,0.49);
+  box-shadow: 6px 4px 5px 0px rgba(0, 0, 0, 0.49);
+  -webkit-box-shadow: 6px 4px 5px 0px rgba(0, 0, 0, 0.49);
+  -moz-box-shadow: 6px 4px 5px 0px rgba(0, 0, 0, 0.49);
 `;
 
 const CloseButton = styled(Button)`
@@ -45,29 +52,68 @@ type Props = {
   close: () => void;
   applyMacro: (resolvedValue: string) => void;
   getCursorPosition: () => CursorPosition;
+  cursorElement: HTMLElement;
 };
 
-const MacroApplyPopover = ({ getCursorPosition, close, applyMacro }: Props) => {
+const MacroApplyPopover = ({
+  getCursorPosition,
+  close,
+  applyMacro,
+  cursorElement,
+}: Props) => {
+  const dispatch = useDispatch();
   const isMacroSelected = useSelector(getIsMacroSelected);
-  const containerRef = useOnFocusOut<HTMLDivElement>(close);
+  const containerRef: MutableRefObject<HTMLDivElement | null> =
+    useRef<HTMLDivElement>(null);
+  useOnFocusOut<HTMLDivElement>(close, containerRef);
+
+  useEffect(() => {
+    dispatch(resetUi());
+    return () => {
+      dispatch(resetUi());
+    };
+  }, []);
+
+  const [referenceElement] = useState(cursorElement);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
+    null
+  );
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: 'right-start',
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [24, 0],
+        },
+      },
+    ],
+  });
+
+  const back = () => dispatch(clearSelectedMacro());
 
   return (
     <Container
       data-testid="macro-apply-popover"
-      ref={containerRef}
+      ref={(el) => {
+        containerRef.current = el;
+        setPopperElement(el);
+      }}
       position={getCursorPosition()}
       onKeyDown={(e) => {
         if (e.key === 'Escape') {
           close();
         }
       }}
+      style={styles.popper}
+      {...attributes.popper}
     >
       <h2>Apply Macro</h2>
       <CloseButton type="button" onClick={close}>
         X
       </CloseButton>
       {!isMacroSelected && <MacroList />}
-      {isMacroSelected && <MacroApply applyMacro={applyMacro} />}
+      {isMacroSelected && <MacroApply applyMacro={applyMacro} back={back} />}
     </Container>
   );
 };

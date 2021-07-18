@@ -31,7 +31,7 @@ const MacroManageModal = () => {
   const makeMacro = () => {
     dispatch(
       createMacro({
-        label: '',
+        label: 'Macro Label',
         text: 'Macro Content',
       })
     );

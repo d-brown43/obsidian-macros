@@ -1,32 +1,36 @@
 import { Macro } from '../types';
 import { useFocus } from './hooks';
 import { useDispatch, useSelector } from 'react-redux';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Button from '../components/Button';
 import { getMacro, selectMacro } from '../redux';
 import { useMemo } from 'react';
+import { POPOVER_WIDTH_REM } from "../styling";
+
+const overflow = css`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
 
 const MacroSelect = styled(Button)`
   margin: 0;
   max-width: 20rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  margin-right: 1rem;
+  ${overflow}
+`;
+
+const MacroText = styled.span`
+  display: block;
+  max-width: ${POPOVER_WIDTH_REM * (2 / 3)}rem;
+  flex-grow: 1;
+  ${overflow};
 `;
 
 const MacroRow = styled.div`
   margin-bottom: 0.5rem !important;
   display: flex;
   flex-direction: row;
-`;
-
-const Label = styled.span`
-  display: block;
-  margin-right: 0.5rem;
-  width: 7rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 type Props = {
@@ -46,14 +50,16 @@ const MacroItem = ({ macroId, doFocus }: Props) => {
 
   return (
     <MacroRow>
-      <Label>{macro.label}</Label>
       <MacroSelect
         data-testid={`macro-item-${macroId}`}
         ref={ref}
         onClick={onClick}
       >
-        {macro.text}
+        {macro.label}
       </MacroSelect>
+      <MacroText>
+        {macro.text}
+      </MacroText>
     </MacroRow>
   );
 };

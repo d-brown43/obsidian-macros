@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import MacroApply from './MacroApply';
 import store, { createMacro, selectMacro } from '../redux';
 import { Macro } from '../types';
-import { resetStoreState } from "../testUtils";
+import { resetStoreState } from '../testUtils';
 
 beforeEach(resetStoreState);
 
@@ -21,7 +21,7 @@ it('applies the selected macro immediately if no variables to replace', () => {
 
   render(
     <Provider store={store}>
-      <MacroApply applyMacro={applyMacro} />
+      <MacroApply applyMacro={applyMacro} back={jest.fn()} />
     </Provider>
   );
 
@@ -42,7 +42,7 @@ it('renders inputs for the selected macros variables if some variables', async (
 
   const { getByTestId } = render(
     <Provider store={store}>
-      <MacroApply applyMacro={applyMacro} />
+      <MacroApply applyMacro={applyMacro} back={jest.fn()} />
     </Provider>
   );
 
