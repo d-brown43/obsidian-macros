@@ -19,30 +19,15 @@
             }
           },
           {
-            "id": "49894582eb979d47",
-            "type": "split",
-            "children": [
-              {
-                "id": "d10164250ad2bb9d",
-                "type": "leaf",
-                "state": {
-                  "type": "graph",
-                  "state": {}
-                }
-              },
-              {
-                "id": "3a4ad9a9767bee3a",
-                "type": "leaf",
-                "state": {
-                  "type": "markdown",
-                  "state": {
-                    "file": "Untitled.md",
-                    "mode": "source"
-                  }
-                }
+            "id": "3a4ad9a9767bee3a",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Untitled.md",
+                "mode": "source"
               }
-            ],
-            "direction": "vertical"
+            }
           }
         ],
         "direction": "horizontal"

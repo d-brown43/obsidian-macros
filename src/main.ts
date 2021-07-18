@@ -20,11 +20,18 @@ import { closeApplyMacro, openApplyMacro } from './redux';
 import { observeStore } from './utils';
 
 const DEFAULT_SETTINGS: PluginSettings = {
-  macros: [{
-    id: 'default-macro-ipsum',
-    label: 'Lorem Ipsum',
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse vestibulum, dui a consequat auctor, orci leo efficitur arcu, vel imperdiet enim neque quis nunc. Quisque mattis, ante sed laoreet tristique, mauris est hendrerit sapien, et accumsan orci leo in orci. Donec pretium lectus eget eros tristique, quis maximus nibh gravida. Donec orci nisi, auctor vel bibendum nec, interdum at dolor. Aenean risus nunc, ornare ac tellus eu, pellentesque sagittis ipsum. Nullam vitae maximus nibh. Nunc vulputate sed est eget tincidunt. Nullam viverra porta lacus ut aliquam. In rhoncus est ex, sit amet pretium nibh eleifend vitae. Suspendisse potenti. Nullam finibus lobortis massa, id tempor augue commodo a. Curabitur mi leo, posuere id libero eu, consequat efficitur metus. Duis quis consectetur augue, ut semper odio. Morbi eget augue eu nunc vulputate fermentum ac vitae purus. Donec elementum diam a mauris malesuada, id tincidunt lorem iaculis.',
-  }],
+  macros: [
+    {
+      id: 'default-macro-ipsum',
+      label: 'Lorem Ipsum',
+      text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse vestibulum, dui a consequat auctor, orci leo efficitur arcu, vel imperdiet enim neque quis nunc. Quisque mattis, ante sed laoreet tristique, mauris est hendrerit sapien, et accumsan orci leo in orci. Donec pretium lectus eget eros tristique, quis maximus nibh gravida. Donec orci nisi, auctor vel bibendum nec, interdum at dolor. Aenean risus nunc, ornare ac tellus eu, pellentesque sagittis ipsum. Nullam vitae maximus nibh. Nunc vulputate sed est eget tincidunt. Nullam viverra porta lacus ut aliquam. In rhoncus est ex, sit amet pretium nibh eleifend vitae. Suspendisse potenti. Nullam finibus lobortis massa, id tempor augue commodo a. Curabitur mi leo, posuere id libero eu, consequat efficitur metus. Duis quis consectetur augue, ut semper odio. Morbi eget augue eu nunc vulputate fermentum ac vitae purus. Donec elementum diam a mauris malesuada, id tincidunt lorem iaculis.',
+    },
+    {
+      id: 'default-macro-google',
+      label: 'Google Search',
+      text: '[{link name}](https://google.com?q={search query}',
+    },
+  ],
 };
 
 export default class MacroPlugin extends Plugin {
@@ -47,7 +54,6 @@ export default class MacroPlugin extends Plugin {
 
   async rehydrate() {
     const settings = await this.loadData();
-    console.log('settings', settings);
     const settingsState = settings || DEFAULT_SETTINGS;
     store.dispatch(rehydrate(settingsState.macros));
   }
@@ -72,8 +78,6 @@ export default class MacroPlugin extends Plugin {
   }
 
   async onload() {
-    console.log('loading plugin');
-
     await this.rehydrate();
     this.subscribeToStore();
 
@@ -156,7 +160,6 @@ export default class MacroPlugin extends Plugin {
   }
 
   onunload() {
-    console.log('unloading plugin');
     if (this.storeUnsubscribe) {
       this.storeUnsubscribe();
     }
@@ -164,11 +167,10 @@ export default class MacroPlugin extends Plugin {
   }
 
   async saveSettings() {
-    const macros = store.getState().macro;
+    const macros = getMacros(store.getState());
     const settings = {
       macros,
     };
-    console.log('saving settings', settings);
     await this.saveData(settings);
   }
 }
