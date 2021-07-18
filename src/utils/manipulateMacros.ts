@@ -3,11 +3,17 @@ type IdentifiedVariables = {
   artefacts: string[];
 };
 
+const convertToVariable = (part: string) => {
+  return part.replace(/{\s*/, '').replace(/\s*}/, '');
+};
+
+const isVariableForArtefact = (artefact: string, variableName: string) => {
+  return convertToVariable(artefact) === variableName;
+};
+
 export const identifyMacros = (macroString: string): IdentifiedVariables => {
   const parts = macroString.match(/{([^}^{]+)}/g) || [];
-  const variableNames = parts.map((part) =>
-    part.replace(/{\s*/, '').replace(/\s*}/, '')
-  );
+  const variableNames = parts.map((part) => convertToVariable(part));
   const uniqueVariableNames = variableNames.filter(
     (name, i) => variableNames.indexOf(name) === i
   );
@@ -50,8 +56,8 @@ export const applyReplacements = (
         workingText.substr(0, partIndex),
         workingText.substr(partIndex + part.length),
       ];
-      const variableName = variableNames.find(
-        (variable) => part.indexOf(variable) !== -1
+      const variableName = variableNames.find((variable) =>
+        isVariableForArtefact(part, variable)
       );
       if (!variableName) return acc;
       return {

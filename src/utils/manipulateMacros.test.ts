@@ -122,6 +122,14 @@ describe('apply macro', () => {
   ordered: '{works}',
   works: 'stuff',
 }} | ${'{works} replacement stuff'}
+    ${'{sub} substring var {substr}'} | ${{
+  sub: 'a',
+  substr: 'b',
+}} | ${'a substring var b'}
+    ${'{substr} substring var {sub}'} | ${{
+  sub: 'a',
+  substr: 'b',
+}} | ${'b substring var a'}
   `("replaces to '$expected'", ({ macro, variableMap, expected }) => {
     const getContent = (name: string) => variableMap[name] || '';
     expect(applyReplacements(identifyMacros(macro), getContent, macro)).toEqual(
