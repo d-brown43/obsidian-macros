@@ -37,6 +37,7 @@ const MacroInput = ({
           <VariableRow key={variableName}>
             <MacroSingleApply
               placeholder={variableName}
+              label={variableName}
               value={getValue(variableName)}
               setValue={(value) => setValue(variableName, value)}
               doFocus={shouldFocus}

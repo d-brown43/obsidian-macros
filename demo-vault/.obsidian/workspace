@@ -26,11 +26,8 @@
                 "id": "d10164250ad2bb9d",
                 "type": "leaf",
                 "state": {
-                  "type": "markdown",
-                  "state": {
-                    "file": "Untitled.md",
-                    "mode": "source"
-                  }
+                  "type": "graph",
+                  "state": {}
                 }
               },
               {
@@ -122,7 +119,7 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "d10164250ad2bb9d",
+  "active": "3a4ad9a9767bee3a",
   "lastOpenFiles": [
     "Untitled.md",
     "snakldsa.md",

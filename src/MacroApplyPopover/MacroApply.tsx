@@ -6,20 +6,29 @@ import { Macro as MacroType } from '../types';
 import { applyReplacements, identifyMacros } from '../utils';
 import { getSelectedMacro } from '../redux';
 import styled from 'styled-components';
+import ApplyPreview from './ApplyPreview';
 
 const BackButton = styled(Button)`
   position: absolute;
-  top: 0;
-  left: 0.5rem;
+  top: 0.15rem;
+  left: 0.15rem;
   padding: 0;
+`;
+
+const ApplyContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
 `;
 
 type Props = {
   applyMacro: (resolved: string) => void;
   back: () => void;
+  renderIntoTitle: (element: JSX.Element) => JSX.Element;
 };
 
-const MacroApply = ({ applyMacro, back }: Props) => {
+const MacroApply = ({ applyMacro, back, renderIntoTitle }: Props) => {
   const [content, setContent] = useState<{ [key: string]: string }>({});
   const macro = useSelector(getSelectedMacro) as MacroType;
 
@@ -28,11 +37,32 @@ const MacroApply = ({ applyMacro, back }: Props) => {
     [macro.text]
   );
 
-  const getContent = (variableName: string) => content[variableName] || '';
+  const getContent = useCallback(
+    (variableName: string) => content[variableName] || '',
+    [content]
+  );
+
+  const doReplacements = useCallback(() => {
+    return applyReplacements(identifiedVariables, getContent, macro.text);
+  }, [identifiedVariables, getContent, macro.text]);
+
+  const doTentativeReplacements = useCallback(() => {
+    const variablesWithValues = identifiedVariables.variableNames.filter((v) =>
+      getContent(v)
+    );
+    const artefacts = identifiedVariables.artefacts.filter((a) => {
+      return variablesWithValues.some((v) => a.indexOf(v) !== -1);
+    });
+    return applyReplacements(
+      { artefacts, variableNames: variablesWithValues },
+      getContent,
+      macro.text
+    );
+  }, [identifiedVariables, getContent, macro.text]);
 
   const apply = useCallback(() => {
-    applyMacro(applyReplacements(identifiedVariables, getContent, macro.text));
-  }, [applyMacro, identifiedVariables, content, macro.text]);
+    applyMacro(doReplacements());
+  }, [applyMacro, doReplacements]);
 
   useEffect(() => {
     if (identifiedVariables.variableNames.length === 0) {
@@ -41,10 +71,16 @@ const MacroApply = ({ applyMacro, back }: Props) => {
   }, [identifiedVariables.variableNames.length, apply]);
 
   return (
-    <div>
+    <ApplyContainer>
       <BackButton type="button" onClick={back}>
         &#8592;
       </BackButton>
+      {renderIntoTitle(
+        <ApplyPreview
+          doReplacements={doTentativeReplacements}
+          macroId={macro.id}
+        />
+      )}
       <MacroInput
         variableNames={identifiedVariables.variableNames}
         getValue={getContent}
@@ -59,7 +95,7 @@ const MacroApply = ({ applyMacro, back }: Props) => {
       <Button type="button" onClick={apply} data-testid="confirm-variables">
         Apply
       </Button>
-    </div>
+    </ApplyContainer>
   );
 };
 

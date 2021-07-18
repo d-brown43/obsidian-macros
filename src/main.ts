@@ -7,7 +7,6 @@ import {
   debounce,
   MarkdownView,
   PluginSettingTab,
-  Setting,
 } from 'obsidian';
 import MacroManageModal from './MacroManageModal';
 import { PluginSettings } from './types';

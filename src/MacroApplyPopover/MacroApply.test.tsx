@@ -21,7 +21,11 @@ it('applies the selected macro immediately if no variables to replace', () => {
 
   render(
     <Provider store={store}>
-      <MacroApply applyMacro={applyMacro} back={jest.fn()} />
+      <MacroApply
+        applyMacro={applyMacro}
+        back={jest.fn()}
+        renderIntoTitle={jest.fn()}
+      />
     </Provider>
   );
 
@@ -42,7 +46,11 @@ it('renders inputs for the selected macros variables if some variables', async (
 
   const { getByTestId } = render(
     <Provider store={store}>
-      <MacroApply applyMacro={applyMacro} back={jest.fn()} />
+      <MacroApply
+        applyMacro={applyMacro}
+        back={jest.fn()}
+        renderIntoTitle={jest.fn()}
+      />
     </Provider>
   );
 

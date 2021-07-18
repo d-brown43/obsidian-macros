@@ -15,8 +15,9 @@ const overflow = css`
 
 const MacroSelect = styled(Button)`
   margin: 0;
-  max-width: 20rem;
+  width: 10rem;
   margin-right: 1rem;
+  flex-shrink: 0;
   ${overflow}
 `;
 
