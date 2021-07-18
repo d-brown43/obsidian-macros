@@ -5,7 +5,7 @@ import MacroList from './MacroList';
 import MacroApply from './MacroApply';
 import Button from '../components/Button';
 import { useOnFocusOut } from './hooks';
-import { BACKGROUND_COLOUR } from '../styling';
+import { BACKGROUND_COLOUR, BORDER_STYLING } from '../styling';
 
 type CursorPosition = {
   top: number;
@@ -21,6 +21,7 @@ const Container = styled.div`
   left: ${({ position }: { position: CursorPosition }) =>
     position.left + CURSOR_PADDING}px;
   background: ${BACKGROUND_COLOUR};
+  border: 2px solid ${BORDER_STYLING};
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   padding-left: 1rem;
@@ -28,15 +29,16 @@ const Container = styled.div`
   width: 500px;
   height: 200px;
   z-index: 100;
-  box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
-  -webkit-box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
-  -moz-box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 6px 4px 5px 0px rgba(0,0,0,0.49);
+  -webkit-box-shadow: 6px 4px 5px 0px rgba(0,0,0,0.49);
+  -moz-box-shadow: 6px 4px 5px 0px rgba(0,0,0,0.49);
 `;
 
 const CloseButton = styled(Button)`
   position: absolute;
+  margin: 0;
   top: 0.5rem;
-  right: 0;
+  right: 0.5rem;
 `;
 
 type Props = {

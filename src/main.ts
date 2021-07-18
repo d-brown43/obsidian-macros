@@ -1,43 +1,46 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
-import { App, Modal, Plugin, debounce, MarkdownView } from 'obsidian';
+import { App, Modal, Plugin, debounce, MarkdownView } from "obsidian";
 import MacroManageModal from './MacroManageModal';
 import { PluginSettings } from './types';
 import { Provider } from 'react-redux';
-import store from './redux';
+import store, { getMacros } from "./redux";
 import { Unsubscribe } from 'redux';
-import { rehydrate } from './redux/hydration';
+import { rehydrate } from './redux';
 import MacroApplyPopover from './MacroApplyPopover';
 import * as CodeMirror from 'codemirror';
-import { closeApplyMacro, openApplyMacro } from './redux/ui';
+import { closeApplyMacro, openApplyMacro } from './redux';
+import { observeStore } from "./utils";
 
 const DEFAULT_SETTINGS: PluginSettings = {
   macros: [],
 };
 
 export default class MacroPlugin extends Plugin {
-  settings: PluginSettings = DEFAULT_SETTINGS;
   storeUnsubscribe: Unsubscribe | null = null;
   codeMirrors: CodeMirror.Editor[] = [];
+  closePopover: () => void = () => {};
 
   subscribeToStore() {
     let promise = Promise.resolve();
     const updateSettings = debounce(
       () => {
-        promise = promise.then(() => {
-          this.saveSettings();
-        });
+        promise = promise.then(this.saveSettings);
       },
       1000,
       true
     );
 
-    store.subscribe(updateSettings);
+    this.storeUnsubscribe = observeStore(
+      getMacros,
+      updateSettings,
+    );
   }
 
   async rehydrate() {
     const settings = await this.loadData();
-    store.dispatch(rehydrate(settings.macros));
+    const settingsState = settings || DEFAULT_SETTINGS;
+    store.dispatch(rehydrate(settingsState.macros));
   }
 
   applyMacro(resolvedMacro: string) {
@@ -104,7 +107,7 @@ export default class MacroPlugin extends Plugin {
             element.style.top = '0';
             element.style.left = '0';
 
-            const close = () => {
+            this.closePopover = () => {
               ReactDOM.unmountComponentAtNode(element);
               element.parentNode?.removeChild(element);
               store.dispatch(closeApplyMacro());
@@ -115,12 +118,12 @@ export default class MacroPlugin extends Plugin {
                 Provider,
                 { store },
                 React.createElement(MacroApplyPopover, {
-                  close,
+                  close: this.closePopover,
                   getCursorPosition: () => {
                     return codeMirror.cursorCoords(false, 'page');
                   },
                   applyMacro: (resolvedValue) => {
-                    close();
+                    this.closePopover();
                     this.applyMacro(resolvedValue);
                   },
                 })
@@ -140,6 +143,7 @@ export default class MacroPlugin extends Plugin {
     if (this.storeUnsubscribe) {
       this.storeUnsubscribe();
     }
+    this.closePopover();
   }
 
   async saveSettings() {
