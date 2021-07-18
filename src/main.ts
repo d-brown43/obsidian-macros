@@ -29,7 +29,7 @@ const DEFAULT_SETTINGS: PluginSettings = {
     {
       id: 'default-macro-google',
       label: 'Google Search',
-      text: '[{link name}](https://google.com?q={search query}',
+      text: '[{link name}](https://google.com?q={search query})',
     },
   ],
 };
