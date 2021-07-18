@@ -39,6 +39,11 @@ export const getSelectedMacroId = createSelector(
   (state) => state.selectedMacroId
 );
 
+export const getIsMacroSelected = createSelector(
+  getSelectedMacroId,
+  macroId => macroId !== null
+);
+
 export const { openApplyMacro, closeApplyMacro, selectMacro, resetUi } =
   uiSlice.actions;
 

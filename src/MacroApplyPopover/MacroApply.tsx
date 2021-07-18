@@ -1,13 +1,10 @@
 import { useSelector } from 'react-redux';
 import MacroInput from './MacroInput';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
-import Button from '../components/Button';
+import { Button } from '../components';
 import { Macro as MacroType } from '../types';
 import { applyReplacements, identifyMacros } from '../utils';
 import { getSelectedMacro } from '../redux';
-
-const ApplyButton = styled(Button)``;
 
 type Props = {
   applyMacro: (resolved: string) => void;
@@ -47,13 +44,9 @@ const MacroApply = ({ applyMacro }: Props) => {
         }
         applyMacro={apply}
       />
-      <ApplyButton
-        type="button"
-        onClick={apply}
-        data-testid="confirm-variables"
-      >
+      <Button type="button" onClick={apply} data-testid="confirm-variables">
         Apply
-      </ApplyButton>
+      </Button>
     </div>
   );
 };

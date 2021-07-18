@@ -1,14 +1,11 @@
 import { act, fireEvent, render, waitFor } from '@testing-library/react';
-import MacroApply from './MacroApply';
-import store, { createMacro, rehydrate } from '../redux';
 import { Provider } from 'react-redux';
-import { resetUi, selectMacro } from '../redux/ui';
+import MacroApply from './MacroApply';
+import store, { createMacro, selectMacro } from '../redux';
 import { Macro } from '../types';
+import { resetStoreState } from "../testUtils";
 
-beforeEach(() => {
-  store.dispatch(rehydrate([]));
-  store.dispatch(resetUi());
-});
+beforeEach(resetStoreState);
 
 it('applies the selected macro immediately if no variables to replace', () => {
   const macro: Macro = {

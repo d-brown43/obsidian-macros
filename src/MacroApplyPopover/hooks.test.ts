@@ -6,9 +6,11 @@ describe('useFocus', () => {
     const { result } = renderHook(() => useFocus(false));
 
     const focus = jest.fn();
-    result.current.current = {
-      focus,
-    };
+    Object.assign(result.current, {
+      current: {
+        focus,
+      },
+    });
 
     expect(focus).not.toHaveBeenCalled();
   });
@@ -24,9 +26,11 @@ describe('useFocus', () => {
     );
 
     const focus = jest.fn();
-    result.current.current = {
-      focus,
-    };
+    Object.assign(result.current, {
+      current: {
+        focus,
+      },
+    });
 
     expect(focus).not.toHaveBeenCalled();
 
@@ -50,13 +54,14 @@ describe('useOnFocusOut', () => {
     const { result } = renderHook(() => useOnFocusOut(callback));
 
     const container = document.createElement('div');
-    result.current.current = container;
+    Object.assign(result.current, { current: container });
     document.body.appendChild(container);
 
     const externalSpan = document.createElement('span');
     document.body.appendChild(externalSpan);
 
     const event = new CustomEvent('focus', {
+      // @ts-ignore
       target: externalSpan,
     });
     externalSpan.dispatchEvent(event);
@@ -69,13 +74,14 @@ describe('useOnFocusOut', () => {
     const { result } = renderHook(() => useOnFocusOut(callback));
 
     const container = document.createElement('div');
-    result.current.current = container;
+    Object.assign(result.current, { current: container });
     document.body.appendChild(container);
 
     const internalSpan = document.createElement('span');
     container.appendChild(internalSpan);
 
     const event = new CustomEvent('focus', {
+      // @ts-ignore
       target: internalSpan,
     });
     internalSpan.dispatchEvent(event);

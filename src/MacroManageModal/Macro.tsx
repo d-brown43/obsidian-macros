@@ -1,8 +1,8 @@
 import { Macro as MacroType } from '../types';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { updateMacro, deleteMacro } from '../redux/macros';
-import { useDispatch } from 'react-redux';
+import { updateMacro, deleteMacro, getMacro } from '../redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Button from '../components/Button';
 
 const StyledButton = styled(Button)`
@@ -15,14 +15,17 @@ const StyledInput = styled.input`
 `;
 
 type Props = {
-  macro: MacroType;
+  macroId: MacroType['id'];
   className?: string;
 };
 
-const Macro = ({ macro, className }: Props) => {
+const Macro = ({ macroId, className }: Props) => {
+  const dispatch = useDispatch();
+  const selector = useMemo(() => getMacro(macroId), [macroId]);
+  const macro = useSelector(selector) as MacroType;
+
   const [macroText, setMacroText] = useState(macro.text);
   const [label, setLabel] = useState(macro.label);
-  const dispatch = useDispatch();
 
   const save = () => {
     const trimmedLabel = label.trim();
@@ -30,6 +33,9 @@ const Macro = ({ macro, className }: Props) => {
     if (trimmedLabel === '') {
       computedLabel = macroText;
       setLabel(macroText);
+    }
+    if (computedLabel === '') {
+      computedLabel = 'Macro Label';
     }
     dispatch(
       updateMacro({
@@ -42,15 +48,14 @@ const Macro = ({ macro, className }: Props) => {
 
   const hasChanged = label !== macro.label || macroText !== macro.text;
 
-  const remove = () => {
-    dispatch(deleteMacro(macro));
-  };
+  const remove = () => dispatch(deleteMacro(macroId));
 
   return (
-    <div className={className}>
+    <div className={className} data-testid={`edit-macro-${macroId}`}>
       <label>
         Label:
         <StyledInput
+          data-testid={`edit-macro-label-${macroId}`}
           type="text"
           value={label}
           onChange={(e) => setLabel(e.target.value)}
@@ -58,13 +63,23 @@ const Macro = ({ macro, className }: Props) => {
         />
       </label>
       <StyledInput
+        data-testid={`edit-macro-pattern-${macroId}`}
         type="text"
         onChange={(e) => setMacroText(e.target.value)}
         value={macroText}
         placeholder="Macro"
       />
-      <StyledButton onClick={remove}>X</StyledButton>
-      {hasChanged && <StyledButton onClick={save}>Save</StyledButton>}
+      <StyledButton data-testid={`delete-macro-${macroId}`} onClick={remove}>
+        X
+      </StyledButton>
+      {hasChanged && (
+        <StyledButton
+          data-testid={`edit-macro-confirm-${macroId}`}
+          onClick={save}
+        >
+          Save
+        </StyledButton>
+      )}
     </div>
   );
 };

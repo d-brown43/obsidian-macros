@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import { getMacros, getSelectedMacro } from '../redux';
+import { getIsMacroSelected } from '../redux';
 import MacroList from './MacroList';
 import MacroApply from './MacroApply';
 import Button from '../components/Button';
 import { useOnFocusOut } from './hooks';
+import { BACKGROUND_COLOUR } from '../styling';
 
 type CursorPosition = {
   top: number;
@@ -19,7 +20,7 @@ const Container = styled.div`
     position.top + CURSOR_PADDING}px;
   left: ${({ position }: { position: CursorPosition }) =>
     position.left + CURSOR_PADDING}px;
-  background: var(--background-primary);
+  background: ${BACKGROUND_COLOUR};
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   padding-left: 1rem;
@@ -45,13 +46,12 @@ type Props = {
 };
 
 const MacroApplyPopover = ({ getCursorPosition, close, applyMacro }: Props) => {
-  const selectedMacro = useSelector(getSelectedMacro);
-  const macros = useSelector(getMacros);
+  const isMacroSelected = useSelector(getIsMacroSelected);
   const containerRef = useOnFocusOut<HTMLDivElement>(close);
 
   return (
     <Container
-      tabIndex={-1}
+      data-testid="macro-apply-popover"
       ref={containerRef}
       position={getCursorPosition()}
       onKeyDown={(e) => {
@@ -64,8 +64,8 @@ const MacroApplyPopover = ({ getCursorPosition, close, applyMacro }: Props) => {
       <CloseButton type="button" onClick={close}>
         X
       </CloseButton>
-      {!selectedMacro && <MacroList macros={macros} />}
-      {selectedMacro && <MacroApply applyMacro={applyMacro} />}
+      {!isMacroSelected && <MacroList />}
+      {isMacroSelected && <MacroApply applyMacro={applyMacro} />}
     </Container>
   );
 };

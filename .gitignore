@@ -16,3 +16,4 @@ data.json
 build
 build/
 build/**/*
+coverage

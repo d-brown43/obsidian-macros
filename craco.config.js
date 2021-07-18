@@ -5,7 +5,7 @@ module.exports = {
     writeToDisk: true,
     hot: false,
     inline: false,
-    liveReload: false
+    liveReload: false,
   },
   webpack: {
     configure: {
@@ -13,7 +13,7 @@ module.exports = {
       output: {
         path: path.resolve(__dirname, './build'),
         filename: '[name].js',
-        libraryTarget: 'commonjs'
+        libraryTarget: 'commonjs',
       },
       externals: {
         obsidian: 'obsidian',
@@ -30,6 +30,6 @@ module.exports = {
           },
         },
       },
-    }
+    },
   },
-}
+};
