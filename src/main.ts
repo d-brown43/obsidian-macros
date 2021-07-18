@@ -1,6 +1,14 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
-import { App, Modal, Plugin, debounce, MarkdownView } from 'obsidian';
+import {
+  App,
+  Modal,
+  Plugin,
+  debounce,
+  MarkdownView,
+  PluginSettingTab,
+  Setting,
+} from 'obsidian';
 import MacroManageModal from './MacroManageModal';
 import { PluginSettings } from './types';
 import { Provider } from 'react-redux';
@@ -13,7 +21,11 @@ import { closeApplyMacro, openApplyMacro } from './redux';
 import { observeStore } from './utils';
 
 const DEFAULT_SETTINGS: PluginSettings = {
-  macros: [],
+  macros: [{
+    id: 'default-macro-ipsum',
+    label: 'Lorem Ipsum',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse vestibulum, dui a consequat auctor, orci leo efficitur arcu, vel imperdiet enim neque quis nunc. Quisque mattis, ante sed laoreet tristique, mauris est hendrerit sapien, et accumsan orci leo in orci. Donec pretium lectus eget eros tristique, quis maximus nibh gravida. Donec orci nisi, auctor vel bibendum nec, interdum at dolor. Aenean risus nunc, ornare ac tellus eu, pellentesque sagittis ipsum. Nullam vitae maximus nibh. Nunc vulputate sed est eget tincidunt. Nullam viverra porta lacus ut aliquam. In rhoncus est ex, sit amet pretium nibh eleifend vitae. Suspendisse potenti. Nullam finibus lobortis massa, id tempor augue commodo a. Curabitur mi leo, posuere id libero eu, consequat efficitur metus. Duis quis consectetur augue, ut semper odio. Morbi eget augue eu nunc vulputate fermentum ac vitae purus. Donec elementum diam a mauris malesuada, id tincidunt lorem iaculis.',
+  }],
 };
 
 export default class MacroPlugin extends Plugin {
@@ -56,6 +68,10 @@ export default class MacroPlugin extends Plugin {
     return this.getMarkdownView()?.getMode() === 'source';
   }
 
+  openManageMacros() {
+    new ManageMacroModal(this.app, this).open();
+  }
+
   async onload() {
     console.log('loading plugin');
 
@@ -66,6 +82,8 @@ export default class MacroPlugin extends Plugin {
       this.codeMirrors.push(cm);
     });
 
+    this.addSettingTab(new Settings(this.app, this));
+
     this.addCommand({
       id: 'macro',
       name: 'Manage Macros',
@@ -73,7 +91,7 @@ export default class MacroPlugin extends Plugin {
         let leaf = this.app.workspace.activeLeaf;
         if (leaf) {
           if (!checking) {
-            new ManageMacroModal(this.app, this).open();
+            this.openManageMacros();
           }
           return true;
         }
@@ -180,5 +198,42 @@ class ManageMacroModal extends Modal {
     ReactDOM.unmountComponentAtNode(contentEl);
     contentEl.empty();
     store.dispatch(resetUi());
+  }
+}
+
+class Settings extends PluginSettingTab {
+  plugin: MacroPlugin;
+
+  constructor(app: App, plugin: MacroPlugin) {
+    super(app, plugin);
+    this.plugin = plugin;
+  }
+
+  display(): void {
+    let { containerEl } = this;
+
+    containerEl.empty();
+
+    containerEl.createEl('h2', { text: 'Obsidian Macros' });
+
+    containerEl.createEl('p', {
+      text: 'This is a plugin to allow adding customisable macros.',
+    });
+    containerEl.createEl('p', {
+      text: 'There are two commands, "Manage Macros" and "Apply Macro".',
+    });
+    containerEl.createEl('p', {
+      text: 'Manage macros allows you to customise add, delete and customise your macros.',
+    });
+    containerEl.createEl('p', {
+      text: 'Apply macro will bring up a popup to insert one of your selected macros at the current cursor location in your editor. This command only works while you are editing a file.',
+    });
+
+    const tryoutButton = containerEl.createEl('button', {
+      text: 'Take me to my macros',
+    });
+    this.plugin.registerDomEvent(tryoutButton, 'click', () => {
+      this.plugin.openManageMacros();
+    });
   }
 }
