@@ -105,7 +105,7 @@ export default class MacroPlugin extends Plugin {
     this.addCommand({
       id: 'apply-macro',
       name: 'Apply Macro',
-      checkCallback: (checking: boolean) => {
+      editorCheckCallback: (checking: boolean) => {
         const leaf = this.app.workspace.activeLeaf;
         const isApplyingMacro = store.getState().ui.applyingMacro;
 

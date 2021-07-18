@@ -4,33 +4,15 @@
     "type": "split",
     "children": [
       {
-        "id": "07010091217e084b",
-        "type": "split",
-        "children": [
-          {
-            "id": "ff1f51973910652e",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "snakldsa.md",
-                "mode": "source"
-              }
-            }
-          },
-          {
-            "id": "3a4ad9a9767bee3a",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Untitled.md",
-                "mode": "source"
-              }
-            }
+        "id": "c53ecdd15122ac28",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "my info.md",
+            "mode": "source"
           }
-        ],
-        "direction": "horizontal"
+        }
       }
     ],
     "direction": "vertical"
@@ -86,7 +68,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "snakldsa.md",
+                "file": "my info.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,11 +86,11 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "ff1f51973910652e",
+  "active": "c53ecdd15122ac28",
   "lastOpenFiles": [
-    "snakldsa.md",
-    "Untitled.md",
     "my info.md",
+    "Untitled.md",
+    "snakldsa.md",
     "Untitled 1.md",
     "Test file.md"
   ]
