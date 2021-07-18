@@ -1,4 +1,10 @@
-import { MutableRefObject, RefObject, useEffect, useRef, useState } from "react";
+import {
+  MutableRefObject,
+  RefObject,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 export const useHasUpdated = () => {
   const [hasUpdated, setHasUpdated] = useState(false);
@@ -41,7 +47,7 @@ export const useOnFocusOut = <R extends HTMLElement>(
 
     document.addEventListener('focus', handler, true);
     return () => document.removeEventListener('focus', handler, true);
-  }, [callback]);
+  }, [callback, containerRef]);
 
   return containerRef as RefObject<R>;
 };

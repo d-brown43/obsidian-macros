@@ -9,7 +9,8 @@
   "scripts": {
     "start": "craco start",
     "copy": "cp ./build/main.js ./demo-vault/.obsidian/plugins/obsidian-macros/main.js",
-    "build": "craco build",
+    "build-plugin": "mkdir -p ./obsidian-macros && cp ./build/main.js ./obsidian-macros/main.js && cp ./manifest.json ./obsidian-macros/manifest.json",
+    "build": "craco build && npm run build-plugin",
     "test": "craco test",
     "eject": "react-scripts eject",
     "watch": "npm run copy && npm-watch"

@@ -82,7 +82,7 @@ const MacroApplyPopover = ({
     return () => {
       dispatch(resetUi());
     };
-  }, []);
+  }, [dispatch]);
 
   const [referenceElement] = useState(cursorElement);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(

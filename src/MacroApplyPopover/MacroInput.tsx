@@ -25,7 +25,7 @@ const MacroInput = ({
     if (focusIndex === variableNames.length) {
       applyMacro();
     }
-  }, [focusIndex]);
+  }, [focusIndex, variableNames.length, applyMacro]);
 
   const apply = () => setFocusIndex((prevIndex) => prevIndex + 1);
 

@@ -7,6 +7,11 @@ module.exports = {
     inline: false,
     liveReload: false,
   },
+  eslint: {
+    configure: {
+      extends: ['react-app'],
+    },
+  },
   webpack: {
     configure: {
       entry: './src/main.ts',

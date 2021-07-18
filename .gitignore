@@ -17,3 +17,7 @@ build
 build/
 build/**/*
 coverage
+
+obsidian-macros
+
+.DS_Store
