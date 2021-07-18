@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 export const useHasUpdated = () => {
   const [hasUpdated, setHasUpdated] = useState(false);

@@ -1,10 +1,14 @@
-import { useSelector } from "react-redux";
-import { RootState } from "../redux";
-import MacroInput from "./MacroInput";
-import { useEffect, useState } from "react";
-import styled from "styled-components";
-import Button from "../components/Button";
-import { Macro as MacroType } from "../types";
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux';
+import MacroInput from './MacroInput';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import styled from 'styled-components';
+import Button from '../components/Button';
+import { Macro as MacroType } from '../types';
+import {
+  applyReplacements,
+  identifyVariables,
+} from '../utils/identifyVariables';
 
 const ApplyButton = styled(Button)``;
 
@@ -20,39 +24,26 @@ const MacroApply = ({ selectedMacroId, applyMacro }: Props) => {
     state.macro.find((macro) => macro.id === selectedMacroId)
   ) as MacroType;
 
-  const parts = macro.text.match(/{([^}]+)}/g) || [];
-  const variableNames = parts.map((part) =>
-    part.replace("{", "").replace("}", "")
-  );
-  const uniqueVariableNames = variableNames.filter(
-    (name, i) => variableNames.indexOf(name) === i
+  const identifiedVariables = useMemo(
+    () => identifyVariables(macro.text),
+    [macro.text]
   );
 
-  const apply = () => {
-    const result = parts.reduce<string>((acc, part) => {
-      const variableName = uniqueVariableNames.find(
-        (name) => part.indexOf(name) !== -1
-      );
-      if (variableName) {
-        return acc.replace(new RegExp(part, "g"), content[variableName] || "");
-      }
-      return acc;
-    }, macro.text);
-
-    applyMacro(result);
-  };
+  const apply = useCallback(() => {
+    applyMacro(applyReplacements(identifiedVariables, content, macro.text));
+  }, [applyMacro, identifiedVariables, content, macro.text]);
 
   useEffect(() => {
-    if (uniqueVariableNames.length === 0) {
+    if (identifiedVariables.variableNames.length === 0) {
       apply();
     }
-  }, [uniqueVariableNames.length]);
+  }, [identifiedVariables.variableNames.length, apply]);
 
   return (
     <div>
       <MacroInput
-        variableNames={uniqueVariableNames}
-        getValue={(variableName) => content[variableName] || ""}
+        variableNames={identifiedVariables.variableNames}
+        getValue={(variableName) => content[variableName] || ''}
         setValue={(variableName, value) =>
           setContent((prevState) => ({
             ...prevState,

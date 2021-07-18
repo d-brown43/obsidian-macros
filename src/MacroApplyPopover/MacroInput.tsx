@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import MacroSingleApple from "./MacroSingleApply";
-import styled from "styled-components";
+import { useEffect, useState } from 'react';
+import MacroSingleApple from './MacroSingleApply';
+import styled from 'styled-components';
 
 const VariableRow = styled.div`
   margin-bottom: 0.5rem;

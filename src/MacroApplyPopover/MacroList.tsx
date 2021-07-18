@@ -1,7 +1,7 @@
-import { Macro } from "../types";
-import styled from "styled-components";
-import { useFocus, useHasUpdated } from "./hooks";
-import Button from "../components/Button";
+import { Macro } from '../types';
+import styled from 'styled-components';
+import { useFocus, useHasUpdated } from './hooks';
+import Button from '../components/Button';
 
 const MacroSelect = styled(Button)`
   margin: 0;

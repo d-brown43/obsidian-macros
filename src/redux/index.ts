@@ -1,6 +1,6 @@
-import { configureStore } from "@reduxjs/toolkit";
-import macro from "./macros";
-import ui from "./ui";
+import { configureStore } from '@reduxjs/toolkit';
+import macro from './macros';
+import ui from './ui';
 
 const store = configureStore({
   reducer: {

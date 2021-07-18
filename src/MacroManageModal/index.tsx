@@ -1,9 +1,9 @@
-import Macro from "./Macro";
-import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux";
-import { createMacro } from "src/redux/macros";
-import Button from "../components/Button";
+import Macro from './Macro';
+import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../redux';
+import { createMacro } from 'src/redux/macros';
+import Button from '../components/Button';
 
 const AddMacroButton = styled(Button)`
   margin-top: 1rem;
@@ -26,8 +26,8 @@ const MacroManageModal = () => {
   const makeMacro = () => {
     dispatch(
       createMacro({
-        label: "",
-        text: "Macro Content",
+        label: '',
+        text: 'Macro Content',
       })
     );
   };
@@ -41,7 +41,7 @@ const MacroManageModal = () => {
         for your variable names.
       </p>
       <p>
-        For example with a macro "{"{text}"} stuff goes here", if you enter "my"
+        For example with a macro "{'{text}'} stuff goes here", if you enter "my"
         when applying the macro, you would get "my stuff goes here" inserted at
         the current caret location.
       </p>

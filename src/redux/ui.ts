@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 export type UiState = {
   applyingMacro: boolean;
@@ -9,7 +9,7 @@ const initialState: UiState = {
 };
 
 export const uiSlice = createSlice({
-  name: "ui",
+  name: 'ui',
   initialState,
   reducers: {
     openApplyMacro: (state) => {

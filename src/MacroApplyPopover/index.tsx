@@ -1,10 +1,10 @@
-import styled from "styled-components";
-import { useSelector } from "react-redux";
-import { RootState } from "../redux";
-import { useEffect, useRef, useState } from "react";
-import MacroList from "./MacroList";
-import MacroApply from "./MacroApply";
-import Button from "../components/Button";
+import styled from 'styled-components';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux';
+import { useEffect, useRef, useState } from 'react';
+import MacroList from './MacroList';
+import MacroApply from './MacroApply';
+import Button from '../components/Button';
 
 type CursorPosition = {
   top: number;
@@ -60,8 +60,8 @@ const MacroApplyPopover = ({ getCursorPosition, close, applyMacro }: Props) => {
       }
     };
 
-    document.addEventListener("focus", handler, true);
-    return () => document.removeEventListener("focus", handler, true);
+    document.addEventListener('focus', handler, true);
+    return () => document.removeEventListener('focus', handler, true);
   }, []);
 
   return (
@@ -70,7 +70,7 @@ const MacroApplyPopover = ({ getCursorPosition, close, applyMacro }: Props) => {
       ref={containerRef}
       position={getCursorPosition()}
       onKeyDown={(e) => {
-        if (e.key === "Escape") {
+        if (e.key === 'Escape') {
           close();
         }
       }}

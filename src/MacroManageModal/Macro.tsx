@@ -1,9 +1,9 @@
-import { Macro as MacroType } from "../types";
-import { useState } from "react";
-import styled from "styled-components";
-import { updateMacro, deleteMacro } from "../redux/macros";
-import { useDispatch } from "react-redux";
-import Button from "../components/Button";
+import { Macro as MacroType } from '../types';
+import { useState } from 'react';
+import styled from 'styled-components';
+import { updateMacro, deleteMacro } from '../redux/macros';
+import { useDispatch } from 'react-redux';
+import Button from '../components/Button';
 
 const StyledButton = styled(Button)`
   margin: 0;
@@ -27,7 +27,7 @@ const Macro = ({ macro, className }: Props) => {
   const save = () => {
     const trimmedLabel = label.trim();
     let computedLabel = trimmedLabel;
-    if (trimmedLabel === "") {
+    if (trimmedLabel === '') {
       computedLabel = macroText;
       setLabel(macroText);
     }

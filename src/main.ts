@@ -1,15 +1,15 @@
-import ReactDOM from "react-dom";
-import React from "react";
-import { App, Modal, Plugin, debounce, MarkdownView } from "obsidian";
-import MacroManageModal from "./MacroManageModal";
-import { PluginSettings } from "./types";
-import { Provider } from "react-redux";
-import store from "./redux";
-import { Unsubscribe } from "redux";
-import { rehydrate } from "./redux/hydration";
-import MacroApplyPopover from "./MacroApplyPopover";
-import * as CodeMirror from "codemirror";
-import { closeApplyMacro, openApplyMacro } from "./redux/ui";
+import ReactDOM from 'react-dom';
+import React from 'react';
+import { App, Modal, Plugin, debounce, MarkdownView } from 'obsidian';
+import MacroManageModal from './MacroManageModal';
+import { PluginSettings } from './types';
+import { Provider } from 'react-redux';
+import store from './redux';
+import { Unsubscribe } from 'redux';
+import { rehydrate } from './redux/hydration';
+import MacroApplyPopover from './MacroApplyPopover';
+import * as CodeMirror from 'codemirror';
+import { closeApplyMacro, openApplyMacro } from './redux/ui';
 
 const DEFAULT_SETTINGS: PluginSettings = {
   macros: [],
@@ -45,18 +45,18 @@ export default class MacroPlugin extends Plugin {
   }
 
   getMarkdownView() {
-    if (this.app.workspace.activeLeaf.view.getViewType() === "markdown") {
+    if (this.app.workspace.activeLeaf.view.getViewType() === 'markdown') {
       return this.app.workspace.activeLeaf.view as MarkdownView;
     }
     return null;
   }
 
   isSourceMode(): boolean {
-    return this.getMarkdownView()?.getMode() === "source";
+    return this.getMarkdownView()?.getMode() === 'source';
   }
 
   async onload() {
-    console.log("loading plugin");
+    console.log('loading plugin');
 
     await this.rehydrate();
     this.subscribeToStore();
@@ -66,8 +66,8 @@ export default class MacroPlugin extends Plugin {
     });
 
     this.addCommand({
-      id: "macro",
-      name: "Manage Macros",
+      id: 'macro',
+      name: 'Manage Macros',
       checkCallback: (checking: boolean) => {
         let leaf = this.app.workspace.activeLeaf;
         if (leaf) {
@@ -81,8 +81,8 @@ export default class MacroPlugin extends Plugin {
     });
 
     this.addCommand({
-      id: "apply-macro",
-      name: "Apply Macro",
+      id: 'apply-macro',
+      name: 'Apply Macro',
       checkCallback: (checking: boolean) => {
         const leaf = this.app.workspace.activeLeaf;
         const isApplyingMacro = store.getState().ui.applyingMacro;
@@ -99,10 +99,10 @@ export default class MacroPlugin extends Plugin {
 
             const containerEl = document.body;
 
-            const element = containerEl.createEl("div");
-            element.style.position = "absolute";
-            element.style.top = "0";
-            element.style.left = "0";
+            const element = containerEl.createEl('div');
+            element.style.position = 'absolute';
+            element.style.top = '0';
+            element.style.left = '0';
 
             const close = () => {
               ReactDOM.unmountComponentAtNode(element);
@@ -117,7 +117,7 @@ export default class MacroPlugin extends Plugin {
                 React.createElement(MacroApplyPopover, {
                   close,
                   getCursorPosition: () => {
-                    return codeMirror.cursorCoords(false, "page");
+                    return codeMirror.cursorCoords(false, 'page');
                   },
                   applyMacro: (resolvedValue) => {
                     close();
@@ -136,7 +136,7 @@ export default class MacroPlugin extends Plugin {
   }
 
   onunload() {
-    console.log("unloading plugin");
+    console.log('unloading plugin');
     if (this.storeUnsubscribe) {
       this.storeUnsubscribe();
     }
@@ -147,7 +147,7 @@ export default class MacroPlugin extends Plugin {
     const settings = {
       macros,
     };
-    console.log("saving settings", settings);
+    console.log('saving settings', settings);
     await this.saveData(settings);
   }
 }
