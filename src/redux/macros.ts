@@ -2,7 +2,7 @@ import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 import { Macro } from '../types';
 import { rehydrate } from './hydration';
-import { RootState } from './index';
+import { getMacro, RootState } from "./index";
 
 export type MacroState = Macro[];
 
@@ -34,21 +34,17 @@ export const macroSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(rehydrate, (state, action) => {
-      return action.payload;
+      return action.payload.macros;
     });
   },
 });
 
 export const getMacros = (state: RootState) => state.macro;
 
-export const getMacroIds = createSelector(getMacros, (macros) =>
-  macros.map((m) => m.id)
+export const getTextMacroIds = createSelector(
+  getMacros,
+  macros => macros.map(m => m.id),
 );
-
-export const getMacro = (macroId: Macro['id']) =>
-  createSelector(getMacros, (macros) =>
-    macros.find((macro) => macro.id === macroId)
-  );
 
 export const { createMacro, updateMacro, deleteMacro } = macroSlice.actions;
 

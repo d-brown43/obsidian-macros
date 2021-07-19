@@ -1,7 +1,7 @@
 import { useHasUpdated } from './hooks';
 import MacroItem from './MacroItem';
 import { useSelector } from 'react-redux';
-import { getMacroIds } from '../redux';
+import { getMacroIds } from "../redux";
 
 const MacroList = () => {
   const hasUpdated = useHasUpdated();

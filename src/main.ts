@@ -7,17 +7,27 @@ import {
   debounce,
   MarkdownView,
   PluginSettingTab,
+  Setting,
 } from 'obsidian';
 import MacroManageModal from './MacroManageModal';
 import { PluginSettings } from './types';
 import { Provider } from 'react-redux';
-import store, { getIsApplyingMacro, getMacros, resetUi } from "./redux";
+import store, {
+  getBuiltins,
+  getIsApplyingMacro,
+  getIsDatetimeEnabled,
+  getMacros,
+  resetUi,
+  setSettingEnabled,
+} from './redux';
 import { Unsubscribe } from 'redux';
 import { rehydrate } from './redux';
 import MacroApplyPopover from './MacroApplyPopover';
 import * as CodeMirror from 'codemirror';
 import { closeApplyMacro, openApplyMacro } from './redux';
 import { observeStore } from './utils';
+import FormatDatetimeContext from './FormatDatetimeContext';
+import formatDatetimeApi from './formatDatetimeApi';
 
 const DEFAULT_SETTINGS: PluginSettings = {
   macros: [
@@ -32,6 +42,13 @@ const DEFAULT_SETTINGS: PluginSettings = {
       text: '[{link name}](https://google.com?q={search query})',
     },
   ],
+  builtins: {
+    currentTime: {
+      isEnabled: false,
+      label: 'Current Time',
+      type: 'currentTime',
+    },
+  },
 };
 
 export default class MacroPlugin extends Plugin {
@@ -42,20 +59,28 @@ export default class MacroPlugin extends Plugin {
   subscribeToStore() {
     let promise = Promise.resolve();
     const updateSettings = debounce(
-      () => {
-        promise = promise.then(() => this.saveSettings());
+      (settings: PluginSettings) => {
+        promise = promise.then(() => {
+          return this.saveData(settings);
+        });
       },
       1000,
       true
     );
 
-    this.storeUnsubscribe = observeStore(getMacros, updateSettings);
+    this.storeUnsubscribe = observeStore(
+      (state) => ({
+        macros: getMacros(state),
+        builtins: getBuiltins(state),
+      }),
+      updateSettings
+    );
   }
 
   async rehydrate() {
     const settings = await this.loadData();
     const settingsState = settings || DEFAULT_SETTINGS;
-    store.dispatch(rehydrate(settingsState.macros));
+    store.dispatch(rehydrate(settingsState));
   }
 
   applyMacro(resolvedMacro: string) {
@@ -125,6 +150,8 @@ export default class MacroPlugin extends Plugin {
             element.style.top = '0';
             element.style.left = '0';
 
+            const formatDatetime = formatDatetimeApi();
+
             this.closePopover = () => {
               ReactDOM.unmountComponentAtNode(element);
               element.parentNode?.removeChild(element);
@@ -136,17 +163,21 @@ export default class MacroPlugin extends Plugin {
               React.createElement(
                 Provider,
                 { store },
-                React.createElement(MacroApplyPopover, {
-                  cursorElement: codeMirror.display.input.wrapper,
-                  close: () => this.closePopover(),
-                  getCursorPosition: () => {
-                    return codeMirror.cursorCoords(false, 'page');
-                  },
-                  applyMacro: (resolvedValue) => {
-                    this.closePopover();
-                    this.applyMacro(resolvedValue);
-                  },
-                })
+                React.createElement(
+                  FormatDatetimeContext.Provider,
+                  { value: formatDatetime },
+                  React.createElement(MacroApplyPopover, {
+                    cursorElement: codeMirror.display.input.wrapper,
+                    close: () => this.closePopover(),
+                    getCursorPosition: () => {
+                      return codeMirror.cursorCoords(false, 'page');
+                    },
+                    applyMacro: (resolvedValue) => {
+                      this.closePopover();
+                      this.applyMacro(resolvedValue);
+                    },
+                  })
+                )
               ),
               element
             );
@@ -163,14 +194,6 @@ export default class MacroPlugin extends Plugin {
       this.storeUnsubscribe();
     }
     this.closePopover();
-  }
-
-  async saveSettings() {
-    const macros = getMacros(store.getState());
-    const settings = {
-      macros,
-    };
-    await this.saveData(settings);
   }
 }
 
@@ -214,26 +237,38 @@ class Settings extends PluginSettingTab {
 
     containerEl.empty();
 
-    containerEl.createEl('h2', { text: 'Obsidian Macros' });
-
     containerEl.createEl('p', {
-      text: 'This is a plugin to allow adding customisable macros.',
-    });
-    containerEl.createEl('p', {
+      attr: {
+        style: 'margin-top: 0',
+      },
       text: 'There are two commands, "Manage Macros" and "Apply Macro".',
     });
     containerEl.createEl('p', {
       text: 'Manage macros allows you to customise add, delete and customise your macros.',
     });
-    containerEl.createEl('p', {
-      text: 'Apply macro will bring up a popup to insert one of your selected macros at the current cursor location in your editor. This command only works while you are editing a file.',
-    });
 
-    const tryoutButton = containerEl.createEl('button', {
-      text: 'Take me to my macros',
-    });
-    this.plugin.registerDomEvent(tryoutButton, 'click', () => {
-      this.plugin.openManageMacros();
-    });
+    new Setting(containerEl)
+      .setName('Current datetime macro')
+      .setDesc(
+        'Toggles a builtin macro to be available for application which inserts the current date and time.'
+      )
+      .addToggle((component) => {
+        component.setValue(getIsDatetimeEnabled(store.getState()));
+        component.onChange((value) => {
+          store.dispatch(setSettingEnabled({ currentTime: value }));
+        });
+      });
+
+    new Setting(containerEl)
+      .setName('Take me to my macros')
+      .setDesc('Manage your macros.')
+      .addButton((component) => {
+        component.setButtonText('Manage Macros');
+
+        component.onClick(() => {
+          this.hide();
+          this.plugin.openManageMacros();
+        });
+      });
   }
 }

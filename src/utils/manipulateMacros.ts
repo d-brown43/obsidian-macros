@@ -1,3 +1,8 @@
+import { BuiltinMacro } from '../types';
+import { useContext, useEffect, useState } from "react";
+import FormatDatetimeContext from '../FormatDatetimeContext';
+import { setInterval } from "timers";
+
 type IdentifiedVariables = {
   variableNames: string[];
   artefacts: string[];
@@ -7,7 +12,10 @@ const convertToVariable = (part: string) => {
   return part.replace(/{\s*/, '').replace(/\s*}/, '');
 };
 
-export const isVariableForArtefact = (artefact: string, variableName: string) => {
+export const isVariableForArtefact = (
+  artefact: string,
+  variableName: string
+) => {
   return convertToVariable(artefact) === variableName;
 };
 
@@ -90,4 +98,13 @@ export const applyReplacements = (
     }
     return reduction + addition;
   }, '');
+};
+
+export const useApplyBuiltin = (macro: BuiltinMacro) => {
+  const formatDatetime = useContext(FormatDatetimeContext);
+
+  switch (macro.type) {
+    case "currentTime": return formatDatetime?.formatDatetime(new Date());
+    default: return '';
+  }
 };

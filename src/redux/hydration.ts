@@ -1,4 +1,4 @@
-import { Macro } from '../types';
+import { PluginSettings } from "../types";
 import { createAction } from '@reduxjs/toolkit';
 
-export const rehydrate = createAction<Macro[]>('rehydrate');
+export const rehydrate = createAction<PluginSettings>('rehydrate');

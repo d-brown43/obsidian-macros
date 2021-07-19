@@ -5,7 +5,8 @@ import styled, { css } from 'styled-components';
 import Button from '../components/Button';
 import { getMacro, selectMacro } from '../redux';
 import { useMemo } from 'react';
-import { POPOVER_WIDTH_REM } from "../styling";
+import { POPOVER_WIDTH_REM } from '../styling';
+import { isTextMacro } from "../utils";
 
 const overflow = css`
   overflow: hidden;
@@ -58,9 +59,7 @@ const MacroItem = ({ macroId, doFocus }: Props) => {
       >
         {macro.label}
       </MacroSelect>
-      <MacroText>
-        {macro.text}
-      </MacroText>
+      {isTextMacro(macro) && <MacroText>{macro.text}</MacroText>}
     </MacroRow>
   );
 };

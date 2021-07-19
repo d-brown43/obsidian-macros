@@ -34,11 +34,11 @@ const Heading = styled.strong`
 `;
 
 type Props = {
-  doReplacements: () => string;
+  applyMacro: () => string;
 };
 
-const ApplyPreview = ({ doReplacements }: Props) => {
-  const result = useMemo(doReplacements, [doReplacements]);
+const ApplyPreview = ({ applyMacro }: Props) => {
+  const result = useMemo(applyMacro, [applyMacro]);
 
   return (
     <Preview>

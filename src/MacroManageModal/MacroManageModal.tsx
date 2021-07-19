@@ -1,7 +1,7 @@
 import Macro from './Macro';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMacroIds } from '../redux';
+import { getTextMacroIds } from '../redux';
 import { createMacro } from 'src/redux/macros';
 import Button from '../components/Button';
 import { TEXT_COLOUR } from '../styling';
@@ -25,7 +25,7 @@ const Separator = styled.div`
 `;
 
 const MacroManageModal = () => {
-  const macroIds = useSelector(getMacroIds);
+  const macroIds = useSelector(getTextMacroIds);
   const dispatch = useDispatch();
 
   const makeMacro = () => {

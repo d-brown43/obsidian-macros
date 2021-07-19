@@ -1,11 +1,11 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Macro, Macro as MacroType } from '../types';
-import { RootState } from "./index";
+import { MacroUnion } from '../types';
+import { RootState } from './index';
 import { deleteMacro } from './macros';
 
 export type UiState = {
   applyingMacro: boolean;
-  selectedMacroId: null | MacroType['id'];
+  selectedMacroId: null | MacroUnion['id'];
 };
 
 const initialState: UiState = {
@@ -23,7 +23,7 @@ export const uiSlice = createSlice({
     closeApplyMacro: (state) => {
       state.applyingMacro = false;
     },
-    selectMacro: (state, action: PayloadAction<Macro['id']>) => {
+    selectMacro: (state, action: PayloadAction<MacroUnion['id']>) => {
       state.selectedMacroId = action.payload;
     },
     clearSelectedMacro: (state) => {
@@ -31,18 +31,18 @@ export const uiSlice = createSlice({
     },
     resetUi: () => initialState,
   },
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder.addCase(deleteMacro, (state, action) => {
       if (state.selectedMacroId === action.payload) {
         state.selectedMacroId = null;
       }
     });
-  }
+  },
 });
 
 const getSelf = (state: RootState) => state.ui;
 
-export const getSelectedMacroId = createSelector(
+export const getSelectedMacroId = createSelector<RootState, UiState, MacroUnion['id'] | null>(
   getSelf,
   (state) => state.selectedMacroId
 );
