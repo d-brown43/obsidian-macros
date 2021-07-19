@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
 import styled from 'styled-components';
-import { getMacro } from '../redux';
-import { useSelector } from 'react-redux';
 import { BORDER_COLOUR, CLEVER_TEXT_WRAP } from '../styling';
 
 const Preview = styled.div`
@@ -36,24 +34,17 @@ const Heading = styled.strong`
 `;
 
 type Props = {
-  macroId: string;
   doReplacements: () => string;
 };
 
-const ApplyPreview = ({ macroId, doReplacements }: Props) => {
-  const selector = useMemo(() => getMacro(macroId), [macroId]);
-  const macro = useSelector(selector);
+const ApplyPreview = ({ doReplacements }: Props) => {
   const result = useMemo(doReplacements, [doReplacements]);
-
-  if (!macro) {
-    return null;
-  }
 
   return (
     <Preview>
       <Row>
         <Heading>Preview</Heading>
-        <Result>{result}</Result>
+        <Result data-testid="apply-preview-result">{result}</Result>
       </Row>
     </Preview>
   );

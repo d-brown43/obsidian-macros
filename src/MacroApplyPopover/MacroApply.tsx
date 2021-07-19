@@ -3,7 +3,11 @@ import MacroInput from './MacroInput';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from '../components';
 import { Macro as MacroType } from '../types';
-import { applyReplacements, identifyMacros } from '../utils';
+import {
+  applyReplacements,
+  identifyMacros,
+  isVariableForArtefact,
+} from '../utils';
 import { getSelectedMacro } from '../redux';
 import styled from 'styled-components';
 import ApplyPreview from './ApplyPreview';
@@ -29,7 +33,7 @@ type Props = {
 };
 
 const MacroApply = ({ applyMacro, back, renderIntoTitle }: Props) => {
-  const [content, setContent] = useState<{ [key: string]: string }>({});
+  const [variableMap, setVariableMap] = useState<{ [key: string]: string }>({});
   const macro = useSelector(getSelectedMacro) as MacroType;
 
   const identifiedVariables = useMemo(
@@ -38,27 +42,30 @@ const MacroApply = ({ applyMacro, back, renderIntoTitle }: Props) => {
   );
 
   const getContent = useCallback(
-    (variableName: string) => content[variableName] || '',
-    [content]
+    (variableName: string) => variableMap[variableName] || '',
+    [variableMap]
+  );
+
+  const variablesWithValues = useMemo(
+    () => identifiedVariables.variableNames.filter((v) => getContent(v)),
+    [identifiedVariables, getContent]
   );
 
   const doReplacements = useCallback(() => {
-    return applyReplacements(identifiedVariables, getContent, macro.text);
-  }, [identifiedVariables, getContent, macro.text]);
-
-  const doTentativeReplacements = useCallback(() => {
-    const variablesWithValues = identifiedVariables.variableNames.filter((v) =>
-      getContent(v)
-    );
     const artefacts = identifiedVariables.artefacts.filter((a) => {
-      return variablesWithValues.some((v) => a.indexOf(v) !== -1);
+      return variablesWithValues.some((variable) =>
+        isVariableForArtefact(a, variable)
+      );
     });
     return applyReplacements(
       { artefacts, variableNames: variablesWithValues },
       getContent,
       macro.text
     );
-  }, [identifiedVariables, getContent, macro.text]);
+  }, [identifiedVariables, getContent, macro.text, variablesWithValues]);
+
+  const canApplyAllReplacements =
+    variablesWithValues.length === identifiedVariables.variableNames.length;
 
   const apply = useCallback(() => {
     applyMacro(doReplacements());
@@ -75,24 +82,24 @@ const MacroApply = ({ applyMacro, back, renderIntoTitle }: Props) => {
       <BackButton type="button" onClick={back}>
         &#8592;
       </BackButton>
-      {renderIntoTitle(
-        <ApplyPreview
-          doReplacements={doTentativeReplacements}
-          macroId={macro.id}
-        />
-      )}
+      {renderIntoTitle(<ApplyPreview doReplacements={doReplacements} />)}
       <MacroInput
         variableNames={identifiedVariables.variableNames}
         getValue={getContent}
         setValue={(variableName, value) =>
-          setContent((prevState) => ({
+          setVariableMap((prevState) => ({
             ...prevState,
             [variableName]: value,
           }))
         }
         applyMacro={apply}
       />
-      <Button type="button" onClick={apply} data-testid="confirm-variables">
+      <Button
+        type="button"
+        onClick={apply}
+        data-testid="confirm-variables"
+        disabled={!canApplyAllReplacements}
+      >
         Apply
       </Button>
     </ApplyContainer>

@@ -11,7 +11,7 @@ import {
 import MacroManageModal from './MacroManageModal';
 import { PluginSettings } from './types';
 import { Provider } from 'react-redux';
-import store, { getMacros, resetUi } from './redux';
+import store, { getIsApplyingMacro, getMacros, resetUi } from "./redux";
 import { Unsubscribe } from 'redux';
 import { rehydrate } from './redux';
 import MacroApplyPopover from './MacroApplyPopover';
@@ -107,7 +107,7 @@ export default class MacroPlugin extends Plugin {
       name: 'Apply Macro',
       editorCheckCallback: (checking: boolean) => {
         const leaf = this.app.workspace.activeLeaf;
-        const isApplyingMacro = store.getState().ui.applyingMacro;
+        const isApplyingMacro = getIsApplyingMacro(store.getState());
 
         const markdownView = this.getMarkdownView();
 

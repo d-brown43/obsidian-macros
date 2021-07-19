@@ -27,7 +27,11 @@ const MacroInput = ({
     }
   }, [focusIndex, variableNames.length, applyMacro]);
 
-  const apply = () => setFocusIndex((prevIndex) => prevIndex + 1);
+  const apply = (value: string) => {
+    if (value.length > 0) {
+      setFocusIndex((prevIndex) => prevIndex + 1)
+    }
+  };
 
   return (
     <>
@@ -41,7 +45,7 @@ const MacroInput = ({
               value={getValue(variableName)}
               setValue={(value) => setValue(variableName, value)}
               doFocus={shouldFocus}
-              apply={apply}
+              apply={() => apply(getValue(variableName))}
               testId={`variable-input-${variableName}`}
             />
           </VariableRow>

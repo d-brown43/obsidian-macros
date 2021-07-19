@@ -1,6 +1,7 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Macro, Macro as MacroType } from '../types';
-import { RootState } from './index';
+import { RootState } from "./index";
+import { deleteMacro } from './macros';
 
 export type UiState = {
   applyingMacro: boolean;
@@ -30,6 +31,13 @@ export const uiSlice = createSlice({
     },
     resetUi: () => initialState,
   },
+  extraReducers: builder => {
+    builder.addCase(deleteMacro, (state, action) => {
+      if (state.selectedMacroId === action.payload) {
+        state.selectedMacroId = null;
+      }
+    });
+  }
 });
 
 const getSelf = (state: RootState) => state.ui;
@@ -41,10 +49,20 @@ export const getSelectedMacroId = createSelector(
 
 export const getIsMacroSelected = createSelector(
   getSelectedMacroId,
-  macroId => macroId !== null
+  (macroId) => macroId !== null
 );
 
-export const { openApplyMacro, closeApplyMacro, selectMacro, resetUi, clearSelectedMacro } =
-  uiSlice.actions;
+export const getIsApplyingMacro = createSelector(
+  getSelf,
+  (state) => state.applyingMacro
+);
+
+export const {
+  openApplyMacro,
+  closeApplyMacro,
+  selectMacro,
+  resetUi,
+  clearSelectedMacro,
+} = uiSlice.actions;
 
 export default uiSlice.reducer;

@@ -7,7 +7,7 @@ const convertToVariable = (part: string) => {
   return part.replace(/{\s*/, '').replace(/\s*}/, '');
 };
 
-const isVariableForArtefact = (artefact: string, variableName: string) => {
+export const isVariableForArtefact = (artefact: string, variableName: string) => {
   return convertToVariable(artefact) === variableName;
 };
 
