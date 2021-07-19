@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   applyReplacements,
   identifyMacros,
@@ -34,14 +34,14 @@ const MacroApplyText = ({
 
   const [variableMap, setVariableMap] = useState<{ [key: string]: string }>({});
 
-  const identifiedVariables = useMemo(
-    () => identifyMacros(macro.text),
-    [macro.text]
-  );
-
   const getContent = useCallback(
     (variableName: string) => variableMap[variableName] || '',
     [variableMap]
+  );
+
+  const identifiedVariables = useMemo(
+    () => identifyMacros(macro.text),
+    [macro.text]
   );
 
   const variablesWithValues = useMemo(
@@ -68,12 +68,6 @@ const MacroApplyText = ({
   const doApply = useCallback(() => {
     apply(doReplacements());
   }, [apply, doReplacements]);
-
-  useEffect(() => {
-    if (identifiedVariables.variableNames.length === 0) {
-      doApply();
-    }
-  }, [identifiedVariables.variableNames.length, doApply]);
 
   return (
     <>

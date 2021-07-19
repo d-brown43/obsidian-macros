@@ -30,6 +30,7 @@ it('applies the selected macro immediately if no variables to replace', () => {
   );
 
   expect(applyMacro).toHaveBeenCalledWith(macro.text);
+  expect(applyMacro).toHaveBeenCalledTimes(1);
 });
 
 it('renders inputs for the selected macros variables if some variables', async () => {
@@ -201,17 +202,23 @@ it('doesnt change focus if field doesnt have value yet', async () => {
       key: 'Enter',
     });
 
-    expect(document.activeElement).toEqual(getByTestId('variable-input-variable'));
-    expect(document.activeElement).not.toEqual(getByTestId('variable-input-secondVariable'));
+    expect(document.activeElement).toEqual(
+      getByTestId('variable-input-variable')
+    );
+    expect(document.activeElement).not.toEqual(
+      getByTestId('variable-input-secondVariable')
+    );
 
     fireEvent.change(getByTestId('variable-input-variable'), {
       target: {
         value: 'content',
-      }
+      },
     });
 
     await waitFor(() => {
-      expect((getByTestId('variable-input-variable') as HTMLInputElement).value).toEqual('content');
+      expect(
+        (getByTestId('variable-input-variable') as HTMLInputElement).value
+      ).toEqual('content');
     });
 
     fireEvent.keyDown(getByTestId('variable-input-variable'), {
@@ -219,6 +226,10 @@ it('doesnt change focus if field doesnt have value yet', async () => {
     });
   });
 
-  expect(document.activeElement).not.toEqual(getByTestId('variable-input-variable'));
-  expect(document.activeElement).toEqual(getByTestId('variable-input-secondVariable'));
+  expect(document.activeElement).not.toEqual(
+    getByTestId('variable-input-variable')
+  );
+  expect(document.activeElement).toEqual(
+    getByTestId('variable-input-secondVariable')
+  );
 });

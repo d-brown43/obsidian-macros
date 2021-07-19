@@ -158,6 +158,7 @@ export default class MacroPlugin extends Plugin {
               store.dispatch(closeApplyMacro());
               codeMirror.focus();
               store.dispatch(resetUi());
+              this.closePopover = () => {};
             };
             ReactDOM.render(
               React.createElement(
