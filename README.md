@@ -1,57 +1,54 @@
-## Obsidian Sample Plugin
+# Obsidian Macros
+This plugin is based on [the obsidian sample plugin](https://github.com/obsidianmd/obsidian-sample-plugin).
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+It is designed to allow easy inputting of repetitive
+strings into your markdown notes. It has simple variable
+replacement syntax which you can make use of in your
+macros, essentially anything inside a pair of single
+curly braces is interpreted as a variable.
 
-This project uses Typescript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in Typescript Definition format, which contains TSDoc comments describing what it does.
+For example, if I configure a macro "here it is: { content }", this
+would allow me to enter a value for "content" during macro
+application. If I entered "something" as the value for
+"content" during application, I would end up inserting a string
+"here it is: something" into my markdown note.
 
-**Note:** The Obsidian API is still in early alpha and is subject to change at any time!
+## Installation
+Clone the code
+```
+$ git clone git@github.com:d-brown43/obsidian-macros.git
+$ cd obsidian-macros
+```
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Changes the default font color to red using `styles.css`.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+Install and build the plugin
+```
+$ yarn install
+$ yarn build
+```
 
-### First time developing plugins?
+A folder named `obsidian-macros` will be created
+in the root of the code repository. You will need to copy
+this into your Obsidian.md vault: `<your vault>/.obsidian/plugins`.
 
-Quick starting guide for new plugin devs:
+You will need to enable the plugin within Obsidian.md, in the same
+way as you would with any third party plugin.
 
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+## Using the plugin
+Two commands are added for managing and applying your macros.
 
-### Releasing new releases
+### Manage Macros
+This macro will allow you to manage your macro definitions. Each macro has
+a label for your reference, and the macro string itself. You can add and delete
+macros from this interface
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments.
-- Publish the release.
+### Apply Macro
+To use this command, you will need to be within a markdown editor view. Upon
+applying this macro, a popover will appear showing all the macros you have defined.
+You can select any macro from this list. If your selected macro has any variables,
+a second step will appear allowing you to input values for each variable. If
+the macro has no variables, it will be applied immediately at the location of your
+cursor in the editor.
 
-### Adding your plugin to the community plugin list
-
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
-
-### How to use
-
-- Clone this repo.
-- `npm i` or `yarn` to install dependencies
-- `npm run dev` to start compilation in watch mode.
-
-### Manually installing the plugin
-
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
-
-### API Documentation
-
-See https://github.com/obsidianmd/obsidian-api
+## How it was made
+[Take a look at my blog post](https://david-brown.dev/posts/obsidian-macros-plugin/) with the process I went through
+to create this plugin.
